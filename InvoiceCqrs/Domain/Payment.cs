@@ -16,11 +16,6 @@ namespace InvoiceCqrs.Domain
 
         public void ApplyTo(LineItem lineItem)
         {
-            if (lineItem.Amount > Balance)
-            {
-                throw new Exception($"There is an insufficient balance to apply payment {Id} to line item {lineItem.Id}");
-            }
-
             lineItem.IsPaid = true;
             Balance -= lineItem.Amount;
         }

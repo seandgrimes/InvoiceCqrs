@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InvoiceCqrs.EventStore
 {
-    public static class Stores
+    public static class Streams
     {
         public static readonly string Invoices = "invoices";
     }

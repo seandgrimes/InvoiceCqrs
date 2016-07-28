@@ -48,15 +48,16 @@ namespace InvoiceCqrs
                 Description = "Fee 2"
             });
 
-            var payment = stream.Write(invoice.Id, new PaymentReceived
+            var payment = _Mediator.Send(new ReceivePayment
             {
                 Id = Guid.NewGuid(),
                 Amount = 100,
                 ReceivedOn = DateTime.Now
             });
 
-            stream.Write(invoice.Id, new PaymentApplied
+            _Mediator.Send(new ApplyPayment
             {
+                Id = Guid.NewGuid(),
                 Amount = 25,
                 LineItemId = lineItem1.Id,
                 PaymentId = payment.Id

@@ -14,7 +14,6 @@ namespace InvoiceCqrs.Visitors
         void Visit(InvoiceCreated evt);
         void Visit(LineItemAdded evt);
         void Visit(PaymentApplied evt);
-        void Visit(PaymentReceived evt);
-        void Visit(PaymentUnapplied evt);
+       void Visit(PaymentUnapplied evt);
     }
 }

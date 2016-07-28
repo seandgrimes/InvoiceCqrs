@@ -20,7 +20,7 @@ namespace InvoiceCqrs.Handlers.Command
         public AddLineItemHandler(IMediator mediator, Store store)
         {
             _Mediator = mediator;
-            _Stream = store.Open(Stores.Invoices);
+            _Stream = store.Open(Streams.Invoices);
         }
 
         public LineItem Handle(AddLineItem message)

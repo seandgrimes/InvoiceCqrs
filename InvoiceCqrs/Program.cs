@@ -1,4 +1,6 @@
-﻿using InvoiceCqrs.EventStore;
+﻿using InvoiceCqrs.Decorators;
+using InvoiceCqrs.EventStore;
+using InvoiceCqrs.Validation;
 using InvoiceCqrs.Visitors;
 using MediatR;
 using StructureMap;
@@ -19,6 +21,8 @@ namespace InvoiceCqrs
                     scanner.ConnectImplementationsToTypesClosing(typeof(IAsyncRequestHandler<,>));
                     scanner.ConnectImplementationsToTypesClosing(typeof(INotificationHandler<>));
                     scanner.ConnectImplementationsToTypesClosing(typeof(IAsyncNotificationHandler<>));
+
+                    scanner.ConnectImplementationsToTypesClosing(typeof(IValidator<>));
                 });
 
                 cfg.For<SingleInstanceFactory>().Use<SingleInstanceFactory>(ctx => t => ctx.GetInstance(t));
@@ -28,6 +32,8 @@ namespace InvoiceCqrs
                 cfg.For<Store>().Use<Store>().Singleton();
                 cfg.For<Application>().Use<Application>().Singleton();
                 cfg.For<IInvoiceEventVisitor>().Use<InvoiceHistoryVisitor>();
+
+                cfg.For(typeof(IRequestHandler<,>)).DecorateAllWith(typeof(CommandValidationDecorator<,>));
             });
 
             var app = container.GetInstance<Application>();

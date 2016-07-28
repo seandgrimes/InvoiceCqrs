@@ -1,13 +1,21 @@
 ﻿using System;
 using InvoiceCqrs.Domain;
 using InvoiceCqrs.Messages.Events;
+using InvoiceCqrs.Messages.Queries;
 using MediatR;
 
-namespace InvoiceCqrs.EventHandlers
+namespace InvoiceCqrs.Handlers.Event
 {
     public class InvoiceEventHandlers : INotificationHandler<InvoiceCreated>, INotificationHandler<LineItemAdded>, INotificationHandler<PaymentApplied>,
         INotificationHandler<PaymentUnapplied>, INotificationHandler<PaymentReceived>
     {
+        private readonly IMediator _Mediator;
+
+        public InvoiceEventHandlers(IMediator mediator)
+        {
+            _Mediator = mediator;
+        }
+
         public void Handle(InvoiceCreated notification)
         {
             if (ReadModel.Invoices.ContainsKey(notification.Id))
@@ -38,8 +46,7 @@ namespace InvoiceCqrs.EventHandlers
 
         public void Handle(PaymentApplied notification)
         {
-            var lineItem = ReadModel.LineItems[notification.LineItemId];
-            var invoice = ReadModel.Invoices[lineItem.InvoiceId];
+            var invoice = _Mediator.Send(new GetInvoiceForLineItem {LineItemId = notification.LineItemId});
             var payment = ReadModel.Payments[notification.PaymentId];
 
             invoice.ApplyPayment(payment, notification.LineItemId);

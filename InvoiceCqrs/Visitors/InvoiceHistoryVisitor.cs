@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using InvoiceCqrs.Domain;
 using InvoiceCqrs.Messages.Events;
 
@@ -32,17 +33,10 @@ namespace InvoiceCqrs.Visitors
 
         public void Visit(PaymentApplied evt)
         {
-            //var payment = _Payments.Single(p => p.Id == evt.PaymentId);
-            //_Invoice.ApplyPayment(payment, evt.LineItemId);
+            evt.Apply(_Invoice);
 
             Messages.Add($"{evt.EventDateTime}: Payment {evt.PaymentId} applied to line item {evt.LineItemId}"); 
-            //Messages.Add($"New balance ${_Invoice.Balance}");
-        }
-
-        public void Visit(PaymentReceived evt)
-        {
-            // We're kinda screwed here since a payment can be applied to multiple
-            // payments
+            Messages.Add($"New balance ${_Invoice.Balance}");
         }
 
         public void Visit(PaymentUnapplied evt)

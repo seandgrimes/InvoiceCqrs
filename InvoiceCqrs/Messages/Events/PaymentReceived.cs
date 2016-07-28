@@ -1,10 +1,9 @@
 ﻿using System;
 using InvoiceCqrs.Domain;
-using InvoiceCqrs.Visitors;
 
 namespace InvoiceCqrs.Messages.Events
 {
-    public class PaymentReceived : IEvent<Payment>, IVisitable<IInvoiceEventVisitor>
+    public class PaymentReceived : IEvent<Payment>
     {
         public Guid Id { get; set; }
 
@@ -16,14 +15,10 @@ namespace InvoiceCqrs.Messages.Events
 
         public void Apply(Payment target)
         {
+            target.Id = Id;
             target.ReceivedOn = ReceivedOn;
             target.Balance = Amount;
             target.Amount = Amount;
-        }
-
-        public void Accept(IInvoiceEventVisitor visitor)
-        {
-            visitor.Visit(this);
         }
     }
 }
