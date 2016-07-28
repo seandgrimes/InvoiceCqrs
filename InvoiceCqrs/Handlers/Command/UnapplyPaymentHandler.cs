@@ -7,44 +7,32 @@ using MediatR;
 
 namespace InvoiceCqrs.Handlers.Command
 {
-    public class ApplyPaymentHandler : IRequestHandler<ApplyPayment, bool>
+    public class UnapplyPaymentHandler : IRequestHandler<UnapplyPayment, bool>
     {
         private readonly IMediator _Mediator;
         private readonly Stream _Stream;
-        
-        public ApplyPaymentHandler(Store store, IMediator mediator)
+
+        public UnapplyPaymentHandler(IMediator mediator, Store store)
         {
             _Mediator = mediator;
             _Stream = store.Open(Streams.Invoices);
         }
 
-        public bool Handle(ApplyPayment message)
+        public bool Handle(UnapplyPayment message)
         {
-            var invoice = _Mediator.Send(new GetInvoiceForLineItem { LineItemId = message.LineItemId });
+            var invoice = _Mediator.Send(new GetInvoiceForLineItem {LineItemId = message.LineItemId});
 
-            _Stream.Write(invoice.Id, new PaymentApplied
+            _Stream.Write(invoice.Id, new PaymentUnapplied
             {
                 Amount = message.Amount,
                 LineItemId = message.LineItemId,
                 PaymentId = message.PaymentId
             });
 
-            _Stream.Write(invoice.Id, new LineItemPaid
-            {
-                LineItemId = message.LineItemId,
-                PaymentId = message.PaymentId
-            });
-
             _Stream.Write(invoice.Id, new InvoiceBalanceUpdated
             {
-                Amount = -1 * message.Amount,
+                Amount = message.Amount,
                 InvoiceId = invoice.Id,
-                PaymentId = message.PaymentId
-            });
-
-            _Stream.Write(message.PaymentId, new PaymentBalanceUpdated
-            {
-                Amount = -1 * message.Amount,
                 PaymentId = message.PaymentId
             });
 

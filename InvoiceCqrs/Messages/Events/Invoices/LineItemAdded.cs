@@ -1,8 +1,8 @@
 ﻿using System;
-using InvoiceCqrs.Domain;
+using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Visitors;
 
-namespace InvoiceCqrs.Messages.Events
+namespace InvoiceCqrs.Messages.Events.Invoices
 {
     public class LineItemAdded : IEvent<LineItem>, IVisitable<IInvoiceEventVisitor>
     {

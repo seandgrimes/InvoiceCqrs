@@ -1,5 +1,6 @@
-﻿using InvoiceCqrs.Domain;
+﻿using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Queries;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using InvoiceCqrs.Messages.Commands;
+using InvoiceCqrs.Persistence;
 
 namespace InvoiceCqrs.Validation.Commands
 {

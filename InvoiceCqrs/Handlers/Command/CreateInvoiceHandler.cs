@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using InvoiceCqrs.Domain;
-using InvoiceCqrs.EventStore;
+using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Commands;
 using InvoiceCqrs.Messages.Events;
+using InvoiceCqrs.Messages.Events.Invoices;
 using InvoiceCqrs.Messages.Queries;
+using InvoiceCqrs.Persistence.EventStore;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Command

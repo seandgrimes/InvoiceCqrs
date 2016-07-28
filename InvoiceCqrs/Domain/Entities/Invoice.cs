@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace InvoiceCqrs.Domain
+namespace InvoiceCqrs.Domain.Entities
 {
     public class Invoice : Entity
     {
@@ -14,23 +12,6 @@ namespace InvoiceCqrs.Domain
         public string InvoiceNumber { get; set; }
 
         public IList<LineItem> LineItems { get; set; } = new List<LineItem>();
-
-        public void AddLineItem(LineItem lineItem)
-        {
-            LineItems.Add(lineItem);
-            Balance += lineItem.Amount;
-        }
-
-        public void ApplyPayment(Payment payment, Guid lineItemId)
-        {
-            var lineItem = LineItems.SingleOrDefault(li => li.Id == lineItemId);
-            if (lineItem == null)
-            {
-                throw new Exception($"Line item with ID of {lineItemId} does not exist");
-            }
-
-            payment.ApplyTo(lineItem);
-        }
 
         public override string ToString()
         {

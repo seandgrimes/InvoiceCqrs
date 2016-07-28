@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
-using InvoiceCqrs.EventStore;
 using InvoiceCqrs.Messages.Commands;
-using InvoiceCqrs.Messages.Events;
+using InvoiceCqrs.Messages.Queries;
+using InvoiceCqrs.Persistence;
+using InvoiceCqrs.Persistence.EventStore;
 using InvoiceCqrs.Visitors;
 using MediatR;
 using Newtonsoft.Json;
@@ -63,15 +64,20 @@ namespace InvoiceCqrs
                 PaymentId = payment.Id
             });
 
-            var events = stream.Events
-                .Where(evt => evt.ExternalId == invoice.Id)
-                .Select(evt => JsonConvert.DeserializeObject(evt.JsonContent, evt.EventType) as IVisitable<IInvoiceEventVisitor>)
-                .ToList();
+            _Mediator.Send(new UnapplyPayment
+            {
+                Amount = 25,
+                LineItemId = lineItem1.Id,
+                PaymentId = payment.Id
+            });
 
-            events.ForEach(evt => evt.Accept(_InvoiceVisitor));
-                
+            var invoiceHistory = _Mediator.Send(new GetInvoiceHistory
+            {
+                InvoiceId = invoice.Id
+            });
+
             Console.WriteLine(ReadModel.Invoices[invoice.Id]);
-            Console.WriteLine(string.Join("\n", _InvoiceVisitor.Messages));
+            invoiceHistory.ToList().ForEach(history => Console.WriteLine($"{history.EventDate}: {history.Message}"));
         }
     }
 }

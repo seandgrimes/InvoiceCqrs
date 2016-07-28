@@ -1,23 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using InvoiceCqrs.Domain;
+using InvoiceCqrs.Domain.Entities;
+using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Messages.Events;
+using InvoiceCqrs.Messages.Events.Invoices;
+using InvoiceCqrs.Messages.Events.Payments;
 
 namespace InvoiceCqrs.Visitors
 
 {
     public class InvoiceHistoryVisitor : IInvoiceEventVisitor
     {
-        public IList<string> Messages { get; set; } = new List<string>();
+        public IList<EventHistoryItem> EventHistory { get; } = new List<EventHistoryItem>();
 
         private readonly Invoice _Invoice = new Invoice();
-        private readonly IList<Payment> _Payments = new List<Payment>();
+
+        private static EventHistoryItem CreateEventHistoryItem<TEvent>(IEvent<TEvent> evt)
+        {
+            return new EventHistoryItem
+            {
+                EventDate = evt.EventDateTime,
+                EventType = evt.GetType()
+            };
+        }
 
         public void Visit(InvoiceCreated evt)
         {
             evt.Apply(_Invoice);
-            Messages.Add($"{evt.EventDateTime}: Invoice created");
+
+            var historyItem = CreateEventHistoryItem(evt);
+            historyItem.Message = "Invoice created";
+            EventHistory.Add(historyItem);
+        }
+
+        public void Visit(InvoiceBalanceUpdated evt)
+        {
+            evt.Apply(_Invoice);
+
+            var historyItem = CreateEventHistoryItem(evt);
+            historyItem.Message = $"New balance of ${_Invoice.Balance}";
+            EventHistory.Add(historyItem);
         }
 
         public void Visit(LineItemAdded evt)
@@ -25,23 +48,45 @@ namespace InvoiceCqrs.Visitors
             var lineItem = new LineItem();
             evt.Apply(lineItem);
 
-            _Invoice.AddLineItem(lineItem);
+            _Invoice.LineItems.Add(lineItem);
 
-            Messages.Add($"{evt.EventDateTime}: Line item {evt.Id} added to invoice {evt.InvoiceId}");
-            Messages.Add($"New balance ${_Invoice.Balance}");
+            var historyItem = CreateEventHistoryItem(evt);
+            historyItem.Message = $"Line item {evt.Id} added to invoice {evt.InvoiceId}";
+            EventHistory.Add(historyItem);
+        }
+
+        public void Visit(LineItemPaid evt)
+        {
+            var lineItem = _Invoice.LineItems.Single(li => li.Id == evt.LineItemId);
+            evt.Apply(lineItem);
+
+            var historyItem = CreateEventHistoryItem(evt);
+            historyItem.Message = $"Line item {evt.LineItemId} has been paid";
+            EventHistory.Add(historyItem);
         }
 
         public void Visit(PaymentApplied evt)
         {
             evt.Apply(_Invoice);
 
-            Messages.Add($"{evt.EventDateTime}: Payment {evt.PaymentId} applied to line item {evt.LineItemId}"); 
-            Messages.Add($"New balance ${_Invoice.Balance}");
+            var historyItem = CreateEventHistoryItem(evt);
+            historyItem.Message = $"Payment {evt.PaymentId} applied to line item {evt.LineItemId}";
+            EventHistory.Add(historyItem);
         }
 
         public void Visit(PaymentUnapplied evt)
         {
-            throw new NotImplementedException();
+            evt.Apply(_Invoice);
+
+            var historyItem = CreateEventHistoryItem(evt);
+            historyItem.Message = $"Payment {evt.PaymentId} unapplied to line item {evt.LineItemId}";
+            EventHistory.Add(historyItem);
+        }
+
+        public IList<EventHistoryItem> Visit(IList<IVisitable<IInvoiceEventVisitor>> events)
+        {
+            events.ToList().ForEach(evt => evt.Accept(this));
+            return EventHistory;
         }
     }
 }

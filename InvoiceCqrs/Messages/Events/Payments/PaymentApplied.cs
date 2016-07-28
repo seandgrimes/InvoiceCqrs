@@ -1,14 +1,14 @@
 ﻿using System;
-using InvoiceCqrs.Domain;
+using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Visitors;
 
-namespace InvoiceCqrs.Messages.Events
+namespace InvoiceCqrs.Messages.Events.Payments
 {
-    public class PaymentUnapplied : IEvent<Invoice>, IVisitable<IInvoiceEventVisitor>
+    public class PaymentApplied : IEvent<Invoice>, IVisitable<IInvoiceEventVisitor>
     {
-        public int PaymentId { get; set; }
+        public Guid PaymentId { get; set; }
 
-        public int LineItemId { get; set; }
+        public Guid LineItemId { get; set; }
 
         public decimal Amount { get; set; }
 
@@ -16,7 +16,7 @@ namespace InvoiceCqrs.Messages.Events
 
         public void Apply(Invoice target)
         {
-            target.Balance += Amount;
+            // No-op
         }
 
         public void Accept(IInvoiceEventVisitor visitor)

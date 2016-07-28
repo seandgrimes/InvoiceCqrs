@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Linq;
-using InvoiceCqrs.Domain;
+using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Visitors;
 
-namespace InvoiceCqrs.Messages.Events
+namespace InvoiceCqrs.Messages.Events.Payments
 {
-    public class PaymentApplied : IEvent<Invoice>, IVisitable<IInvoiceEventVisitor>
+    public class PaymentUnapplied : IEvent<Invoice>, IVisitable<IInvoiceEventVisitor>
     {
         public Guid PaymentId { get; set; }
 
@@ -17,7 +16,7 @@ namespace InvoiceCqrs.Messages.Events
 
         public void Apply(Invoice target)
         {
-            target.Balance -= Amount;
+            // No-op
         }
 
         public void Accept(IInvoiceEventVisitor visitor)

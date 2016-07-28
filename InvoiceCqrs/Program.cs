@@ -1,5 +1,5 @@
 ﻿using InvoiceCqrs.Decorators;
-using InvoiceCqrs.EventStore;
+using InvoiceCqrs.Persistence.EventStore;
 using InvoiceCqrs.Validation;
 using InvoiceCqrs.Visitors;
 using MediatR;

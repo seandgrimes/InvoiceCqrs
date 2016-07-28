@@ -1,10 +1,12 @@
 ﻿using System;
 
-namespace InvoiceCqrs.Domain
+namespace InvoiceCqrs.Domain.Entities
 {
     public class LineItem : Entity
     {
         public Guid InvoiceId { get; set; }
+
+        public Invoice Invoice { get; set; }
 
         public string Description { get; set; }
 

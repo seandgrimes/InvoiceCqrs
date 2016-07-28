@@ -1,13 +1,15 @@
 ﻿using System;
-using InvoiceCqrs.Domain;
-using InvoiceCqrs.Messages.Events;
+using InvoiceCqrs.Domain.Entities;
+using InvoiceCqrs.Messages.Events.Invoices;
+using InvoiceCqrs.Messages.Events.Payments;
 using InvoiceCqrs.Messages.Queries;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Event
 {
     public class InvoiceEventHandlers : INotificationHandler<InvoiceCreated>, INotificationHandler<LineItemAdded>, INotificationHandler<PaymentApplied>,
-        INotificationHandler<PaymentUnapplied>, INotificationHandler<PaymentReceived>
+        INotificationHandler<PaymentUnapplied>, INotificationHandler<PaymentReceived>, INotificationHandler<InvoiceBalanceUpdated>
     {
         private readonly IMediator _Mediator;
 
@@ -39,22 +41,21 @@ namespace InvoiceCqrs.Handlers.Event
             notification.Apply(lineItem);
 
             var invoice = ReadModel.Invoices[notification.InvoiceId];
-            invoice.AddLineItem(lineItem);
+            invoice.LineItems.Add(lineItem);
 
             ReadModel.LineItems[notification.Id] = lineItem;
         }
 
         public void Handle(PaymentApplied notification)
         {
-            var invoice = _Mediator.Send(new GetInvoiceForLineItem {LineItemId = notification.LineItemId});
-            var payment = ReadModel.Payments[notification.PaymentId];
-
-            invoice.ApplyPayment(payment, notification.LineItemId);
+            // If we needed to maintain a read-model version of the payment history
+            // for an invoice, we'd probably do something here
         }
 
         public void Handle(PaymentUnapplied notification)
         {
-            throw new NotImplementedException();
+            // If wee needed to maintain a read-model version of the payment history
+            // for an invoice, we'd probably do something here
         }
 
         public void Handle(PaymentReceived notification)
@@ -68,6 +69,12 @@ namespace InvoiceCqrs.Handlers.Event
             notification.Apply(payment);
 
             ReadModel.Payments[notification.Id] = payment;
+        }
+
+        public void Handle(InvoiceBalanceUpdated notification)
+        {
+            var invoice = ReadModel.Invoices[notification.InvoiceId];
+            notification.Apply(invoice);
         }
     }
 }

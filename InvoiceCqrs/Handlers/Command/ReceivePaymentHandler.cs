@@ -1,8 +1,10 @@
 ﻿using System;
-using InvoiceCqrs.Domain;
-using InvoiceCqrs.EventStore;
+using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Commands;
 using InvoiceCqrs.Messages.Events;
+using InvoiceCqrs.Messages.Events.Payments;
+using InvoiceCqrs.Persistence;
+using InvoiceCqrs.Persistence.EventStore;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Command

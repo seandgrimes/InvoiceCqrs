@@ -1,7 +1,7 @@
 ﻿using System;
-using InvoiceCqrs.Domain;
+using InvoiceCqrs.Domain.Entities;
 
-namespace InvoiceCqrs.Messages.Events
+namespace InvoiceCqrs.Messages.Events.Payments
 {
     public class PaymentReceived : IEvent<Payment>
     {
