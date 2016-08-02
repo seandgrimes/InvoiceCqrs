@@ -11,6 +11,8 @@ namespace InvoiceCqrs.Domain.Entities
 
         public Company Company { get; set; }
 
+        public User CreatedBy { get; set; }
+
         public string InvoiceNumber { get; set; }
 
         public IList<LineItem> LineItems { get; set; } = new List<LineItem>();

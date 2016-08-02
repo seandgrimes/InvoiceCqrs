@@ -6,6 +6,8 @@ namespace InvoiceCqrs.Domain.Entities
     {
         public DateTime ReceivedOn { get; set; }
 
+        public User ReceivedBy { get; set; }
+
         public decimal Amount { get; set; }
 
         public decimal Balance { get; set; }

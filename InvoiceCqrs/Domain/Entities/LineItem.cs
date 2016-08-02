@@ -13,5 +13,7 @@ namespace InvoiceCqrs.Domain.Entities
         public decimal Amount { get; set; }
 
         public bool IsPaid { get; set; }
+
+        public User CreatedBy { get; set; }
     }
 }
