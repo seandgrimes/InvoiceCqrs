@@ -1,7 +1,7 @@
 ﻿using InvoiceCqrs.Decorators;
 using InvoiceCqrs.Persistence.EventStore;
+using InvoiceCqrs.Util;
 using InvoiceCqrs.Validation;
-using InvoiceCqrs.Visitors;
 using InvoiceCqrs.Visitors.Invoices;
 using MediatR;
 using StructureMap;
@@ -33,6 +33,7 @@ namespace InvoiceCqrs
                 cfg.For<Store>().Use<Store>().Singleton();
                 cfg.For<Application>().Use<Application>().Singleton();
                 cfg.For<IInvoiceEventVisitor>().Use<InvoiceHistoryVisitor>();
+                cfg.For<IGuidGenerator>().Use<SequentialGuidGenerator>();
 
                 cfg.For(typeof(IRequestHandler<,>)).DecorateAllWith(typeof(CommandValidationDecorator<,>));
             });

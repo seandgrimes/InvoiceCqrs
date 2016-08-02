@@ -128,6 +128,8 @@
     <Compile Include="Persistence\ReadModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\IGuidGenerator.cs" />
+    <Compile Include="Util\SequentialGuidGenerator.cs" />
     <Compile Include="Validation\Commands\Invoices\CreateInvoiceCommandValidator.cs" />
     <Compile Include="Validation\Commands\Payments\ApplyPaymentCommandValidator.cs" />
     <Compile Include="Validation\Commands\Payments\UnapplyPaymentCommandValidator.cs" />

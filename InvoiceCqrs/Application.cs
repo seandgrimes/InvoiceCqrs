@@ -7,6 +7,7 @@ using InvoiceCqrs.Messages.Commands.Reports;
 using InvoiceCqrs.Messages.Commands.Users;
 using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Persistence;
+using InvoiceCqrs.Util;
 using MediatR;
 
 namespace InvoiceCqrs
@@ -14,23 +15,25 @@ namespace InvoiceCqrs
     public class Application
     {
         private readonly IMediator _Mediator;
-        
-        public Application(IMediator mediator)
+        private readonly IGuidGenerator _GuidGenerator;
+
+        public Application(IMediator mediator, IGuidGenerator guidGenerator)
         {
             _Mediator = mediator;
+            _GuidGenerator = guidGenerator;
         }
 
         public void Run()
         {
             var invoice = _Mediator.Send(new CreateInvoice
             {
-                Id = Guid.NewGuid(),
+                Id = _GuidGenerator.Generate(),
                 InvoiceNumber = Guid.NewGuid().ToString("N").Substring(10)
             });
 
             var lineItem1 = _Mediator.Send(new AddLineItem
             {
-                Id = Guid.NewGuid(),
+                Id = _GuidGenerator.Generate(),
                 InvoiceId = invoice.Id,
                 Amount = 25,
                 Description = "Fee 1"
@@ -38,7 +41,7 @@ namespace InvoiceCqrs
 
             var lineItem2 = _Mediator.Send(new AddLineItem
             {
-                Id = Guid.NewGuid(),
+                Id = _GuidGenerator.Generate(),
                 InvoiceId = invoice.Id,
                 Amount = 50,
                 Description = "Fee 2"
@@ -46,14 +49,14 @@ namespace InvoiceCqrs
 
             var payment = _Mediator.Send(new ReceivePayment
             {
-                Id = Guid.NewGuid(),
+                Id = _GuidGenerator.Generate(),
                 Amount = 100,
                 ReceivedOn = DateTime.Now
             });
 
             _Mediator.Send(new ApplyPayment
             {
-                Id = Guid.NewGuid(),
+                Id = _GuidGenerator.Generate(),
                 Amount = 25,
                 LineItemId = lineItem1.Id,
                 PaymentId = payment.Id
@@ -70,7 +73,7 @@ namespace InvoiceCqrs
             {
                 Email = "test.user@example.com",
                 FirstName = "Test",
-                Id = Guid.NewGuid(),
+                Id = _GuidGenerator.Generate(),
                 LastName = "User"
             });
 
