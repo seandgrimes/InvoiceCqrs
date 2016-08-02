@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
 using InvoiceCqrs.Domain.Entities;
-using InvoiceCqrs.Messages.Commands;
-using InvoiceCqrs.Messages.Queries;
+using InvoiceCqrs.Messages.Commands.Invoices;
+using InvoiceCqrs.Messages.Commands.Payments;
+using InvoiceCqrs.Messages.Commands.Reports;
+using InvoiceCqrs.Messages.Commands.Users;
+using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Persistence;
 using MediatR;
 

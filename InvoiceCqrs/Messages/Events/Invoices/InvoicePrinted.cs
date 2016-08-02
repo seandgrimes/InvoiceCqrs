@@ -1,6 +1,7 @@
 ﻿using System;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Visitors;
+using InvoiceCqrs.Visitors.Invoices;
 
 namespace InvoiceCqrs.Messages.Events.Invoices
 {

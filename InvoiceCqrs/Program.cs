@@ -2,6 +2,7 @@
 using InvoiceCqrs.Persistence.EventStore;
 using InvoiceCqrs.Validation;
 using InvoiceCqrs.Visitors;
+using InvoiceCqrs.Visitors.Invoices;
 using MediatR;
 using StructureMap;
 using StructureMap.Graph;
