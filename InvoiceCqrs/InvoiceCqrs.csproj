@@ -91,6 +91,7 @@
     <Compile Include="Handlers\Query\Payments\GetPaymentHandler.cs" />
     <Compile Include="Handlers\Query\Reports\GetReportHandler.cs" />
     <Compile Include="Handlers\Query\Users\GetUserHandler.cs" />
+    <Compile Include="Handlers\Query\Users\SearchUsersHandler.cs" />
     <Compile Include="Messages\Commands\Invoices\AddLineItem.cs" />
     <Compile Include="Messages\Commands\Invoices\CreateInvoice.cs" />
     <Compile Include="Messages\Commands\Payments\ApplyPayment.cs" />
@@ -117,6 +118,8 @@
     <Compile Include="Messages\Queries\Payments\GetPayment.cs" />
     <Compile Include="Messages\Queries\Reports\GetReport.cs" />
     <Compile Include="Messages\Queries\Users\GetUser.cs" />
+    <Compile Include="Messages\Queries\Users\SearchUsers.cs" />
+    <Compile Include="Messages\Shared\SearchOptions.cs" />
     <Compile Include="Persistence\EventStore\Event.cs" />
     <Compile Include="Persistence\EventStore\ISubscribe.cs" />
     <Compile Include="Persistence\EventStore\Store.cs" />
@@ -126,6 +129,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Validation\Commands\Invoices\CreateInvoiceCommandValidator.cs" />
+    <Compile Include="Validation\Commands\Payments\ApplyPaymentCommandValidator.cs" />
+    <Compile Include="Validation\Commands\Payments\UnapplyPaymentCommandValidator.cs" />
+    <Compile Include="Validation\Commands\Reports\PrintReportCommandValidator.cs" />
+    <Compile Include="Validation\Commands\Users\CreateUserCommandValidator.cs" />
     <Compile Include="Validation\IValidator.cs" />
     <Compile Include="Validation\CommandValidationException.cs" />
     <Compile Include="Visitors\Invoices\IInvoiceEventVisitor.cs" />
