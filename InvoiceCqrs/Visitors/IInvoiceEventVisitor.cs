@@ -18,6 +18,8 @@ namespace InvoiceCqrs.Visitors
 
         void Visit(InvoiceBalanceUpdated evt);
 
+        void Visit(InvoicePrinted evt);
+
         void Visit(LineItemAdded evt);
 
         void Visit(LineItemPaid evt);

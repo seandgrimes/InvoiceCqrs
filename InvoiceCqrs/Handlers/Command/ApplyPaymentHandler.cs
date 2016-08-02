@@ -39,6 +39,7 @@ namespace InvoiceCqrs.Handlers.Command
             {
                 Amount = -1 * message.Amount,
                 InvoiceId = invoice.Id,
+                LineItemId = message.LineItemId,
                 PaymentId = message.PaymentId
             });
 

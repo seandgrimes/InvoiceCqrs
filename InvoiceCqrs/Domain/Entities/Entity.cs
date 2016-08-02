@@ -4,6 +4,6 @@ namespace InvoiceCqrs.Domain.Entities
 {
     public class Entity
     {
-        public Guid Id { get; set; }
+        public virtual Guid Id { get; set; }
     }
 }

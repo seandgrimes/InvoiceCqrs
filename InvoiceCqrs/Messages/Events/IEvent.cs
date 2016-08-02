@@ -7,10 +7,13 @@ using MediatR;
 
 namespace InvoiceCqrs.Messages.Events
 {
-    public interface IEvent<in TTarget> : INotification
+    public interface IEvent : INotification
     {
         DateTime EventDateTime { get; }
+    }
 
+    public interface IEvent<in TTarget> : IEvent
+    {
         void Apply(TTarget target);
     }
 }

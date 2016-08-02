@@ -6,6 +6,8 @@ using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Messages.Events;
 using InvoiceCqrs.Messages.Events.Invoices;
 using InvoiceCqrs.Messages.Events.Payments;
+using InvoiceCqrs.Messages.Queries;
+using MediatR;
 
 namespace InvoiceCqrs.Visitors
 
@@ -16,7 +18,14 @@ namespace InvoiceCqrs.Visitors
 
         private readonly Invoice _Invoice = new Invoice();
 
-        private static EventHistoryItem CreateEventHistoryItem<TEvent>(IEvent<TEvent> evt)
+        private readonly IMediator _Mediator;
+
+        public InvoiceHistoryVisitor(IMediator mediator)
+        {
+            _Mediator = mediator;
+        }
+
+        private static EventHistoryItem CreateEventHistoryItem(IEvent evt)
         {
             return new EventHistoryItem
             {
@@ -40,6 +49,22 @@ namespace InvoiceCqrs.Visitors
 
             var historyItem = CreateEventHistoryItem(evt);
             historyItem.Message = $"New balance of ${_Invoice.Balance}";
+            EventHistory.Add(historyItem);
+        }
+
+        public void Visit(InvoicePrinted evt)
+        {
+            var report = _Mediator.Send(new GetReport {ReportId = evt.ReportId});
+            var user = _Mediator.Send(new GetUser {UserId = evt.PrintedById});
+            var historyItem = CreateEventHistoryItem(evt);
+            
+            // ReSharper disable once UseStringInterpolation
+            historyItem.Message = string.Format("{0} - {1} By: {2} {3}",
+                report.Name,
+                evt.IsReprint ? "Reprint" : "Printed",
+                user.FirstName,
+                user.LastName);
+
             EventHistory.Add(historyItem);
         }
 
@@ -67,8 +92,6 @@ namespace InvoiceCqrs.Visitors
 
         public void Visit(PaymentApplied evt)
         {
-            evt.Apply(_Invoice);
-
             var historyItem = CreateEventHistoryItem(evt);
             historyItem.Message = $"Payment {evt.PaymentId} applied to line item {evt.LineItemId}";
             EventHistory.Add(historyItem);
@@ -76,8 +99,6 @@ namespace InvoiceCqrs.Visitors
 
         public void Visit(PaymentUnapplied evt)
         {
-            evt.Apply(_Invoice);
-
             var historyItem = CreateEventHistoryItem(evt);
             historyItem.Message = $"Payment {evt.PaymentId} unapplied to line item {evt.LineItemId}";
             EventHistory.Add(historyItem);

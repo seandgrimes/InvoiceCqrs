@@ -4,7 +4,7 @@ using InvoiceCqrs.Visitors;
 
 namespace InvoiceCqrs.Messages.Events.Payments
 {
-    public class PaymentApplied : IEvent<Invoice>, IVisitable<IInvoiceEventVisitor>
+    public class PaymentApplied : IEvent, IVisitable<IInvoiceEventVisitor>
     {
         public Guid PaymentId { get; set; }
 
@@ -13,11 +13,6 @@ namespace InvoiceCqrs.Messages.Events.Payments
         public decimal Amount { get; set; }
 
         public DateTime EventDateTime { get; } = DateTime.Now;
-
-        public void Apply(Invoice target)
-        {
-            // No-op
-        }
 
         public void Accept(IInvoiceEventVisitor visitor)
         {

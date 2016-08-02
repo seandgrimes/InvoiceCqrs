@@ -1,32 +1,24 @@
 ﻿using System;
 using System.Linq;
+using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Commands;
 using InvoiceCqrs.Messages.Queries;
 using InvoiceCqrs.Persistence;
-using InvoiceCqrs.Persistence.EventStore;
-using InvoiceCqrs.Visitors;
 using MediatR;
-using Newtonsoft.Json;
 
 namespace InvoiceCqrs
 {
     public class Application
     {
         private readonly IMediator _Mediator;
-        private readonly Store _Store;
-        private readonly IInvoiceEventVisitor _InvoiceVisitor;
-
-        public Application(IMediator mediator, Store store, IInvoiceEventVisitor invoiceVisitor)
+        
+        public Application(IMediator mediator)
         {
             _Mediator = mediator;
-            _Store = store;
-            _InvoiceVisitor = invoiceVisitor;
         }
 
         public void Run()
         {
-            var stream = _Store.Open("invoices");
-
             var invoice = _Mediator.Send(new CreateInvoice
             {
                 Id = Guid.NewGuid(),
@@ -69,6 +61,22 @@ namespace InvoiceCqrs
                 Amount = 25,
                 LineItemId = lineItem1.Id,
                 PaymentId = payment.Id
+            });
+
+            var user = _Mediator.Send(new CreateUser
+            {
+                Email = "test.user@example.com",
+                FirstName = "Test",
+                Id = Guid.NewGuid(),
+                LastName = "User"
+            });
+
+            _Mediator.Send(new PrintReport
+            {
+                PrintedById = user.Id,
+                RecordId = invoice.Id,
+                ReportId = Report.InvoiceReportId,
+                TableId = Table.InvoiceTableId
             });
 
             var invoiceHistory = _Mediator.Send(new GetInvoiceHistory
