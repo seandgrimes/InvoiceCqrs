@@ -13,5 +13,7 @@ namespace InvoiceCqrs.Messages.Commands.Invoices
         public Guid Id { get; set; }
 
         public Guid InvoiceId { get; set; }
+
+        public Guid CreatedById { get; set; }
     }
 }

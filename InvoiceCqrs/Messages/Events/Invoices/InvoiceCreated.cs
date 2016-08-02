@@ -7,6 +7,10 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 {
     public class InvoiceCreated : IEvent<Invoice>, IVisitable<IInvoiceEventVisitor>
     {
+        public Guid CompanyId { get; set; }
+
+        public Guid CreatedById { get; set; }
+
         public Guid Id { get; set; }
 
         public string InvoiceNumber { get; set; }
@@ -22,6 +26,8 @@ namespace InvoiceCqrs.Messages.Events.Invoices
         {
             target.Id = Id;
             target.InvoiceNumber = InvoiceNumber;
+            target.Company = new Company {Id = CompanyId};
+            target.CreatedBy = new User {Id = CreatedById};
         }
     }
 }

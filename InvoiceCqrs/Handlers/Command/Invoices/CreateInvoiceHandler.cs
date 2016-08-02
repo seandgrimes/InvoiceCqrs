@@ -24,6 +24,8 @@ namespace InvoiceCqrs.Handlers.Command.Invoices
         {
             _Stream.Write(message.Id, new InvoiceCreated
             {
+                CompanyId = message.CompanyId,
+                CreatedById = message.CreatedById, 
                 Id = message.Id,
                 InvoiceNumber = message.InvoiceNumber
             });

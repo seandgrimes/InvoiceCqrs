@@ -1,8 +1,9 @@
-﻿using InvoiceCqrs.Domain.Entities;
-using InvoiceCqrs.Messages.Commands;
+﻿using System.Data;
+using Dapper;
+using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Commands.Users;
 using InvoiceCqrs.Messages.Events.Users;
-using InvoiceCqrs.Persistence;
+using InvoiceCqrs.Messages.Queries.Users;
 using InvoiceCqrs.Persistence.EventStore;
 using MediatR;
 
@@ -10,30 +11,38 @@ namespace InvoiceCqrs.Handlers.Command.Users
 {
     public class CreateUserHandler : IRequestHandler<CreateUser, User>
     {
+        private readonly IMediator _Mediator;
         private readonly Stream _Stream;
 
-        public CreateUserHandler(Store store)
+        public CreateUserHandler(Store store, IMediator mediator)
         {
+            _Mediator = mediator;
             _Stream = store.Open(Streams.Users);
         }
 
         public User Handle(CreateUser message)
         {
-            var user = new User
+            _Stream.Write(message.Id, new UserCreated
             {
                 Email = message.Email,
                 FirstName = message.FirstName,
-                Id = message.Id,
-                LastName = message.LastName
-            };
-            ReadModel.Users[user.Id] = user;
-
-            _Stream.Write(user.Id, new UserCreated
-            {
-                UserId = user.Id
+                LastName = message.LastName,
+                UserId = message.Id
             });
 
-            return ReadModel.Users[message.Id];
+            return _Mediator.Send(new GetUser {UserId = message.Id});
         }
+    }
+}
+
+public static class DbCommandExtensions
+{
+    public static void AddParameterWithValue(this IDbCommand command, string paramName, object value)
+    {
+        var param = command.CreateParameter();
+        param.ParameterName = paramName;
+        param.Value = value;
+
+        command.Parameters.Add(param);
     }
 }

@@ -1,8 +1,6 @@
 ﻿using InvoiceCqrs.Domain.Entities;
-using InvoiceCqrs.Messages.Commands;
 using InvoiceCqrs.Messages.Commands.Invoices;
 using InvoiceCqrs.Messages.Events.Invoices;
-using InvoiceCqrs.Messages.Queries;
 using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Persistence.EventStore;
 using MediatR;
@@ -27,13 +25,15 @@ namespace InvoiceCqrs.Handlers.Command.Invoices
                 Id = message.Id,
                 Amount = message.Amount,
                 Description = message.Description,
-                InvoiceId = message.InvoiceId
+                InvoiceId = message.InvoiceId,
+                CreatedById = message.CreatedById
             });
 
             _Stream.Write(message.InvoiceId, new InvoiceBalanceUpdated
             {
                 Amount = message.Amount,
-                InvoiceId = message.InvoiceId
+                InvoiceId = message.InvoiceId,
+                LineItemId = message.Id
             });
 
             return _Mediator.Send(new GetLineItem

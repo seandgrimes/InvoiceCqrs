@@ -37,6 +37,10 @@
       <HintPath>..\packages\AutoMapper.5.0.2\lib\net45\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MediatR, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MediatR.2.1.0\lib\net45\MediatR.dll</HintPath>
       <Private>True</Private>
@@ -54,6 +58,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -76,6 +81,7 @@
     <Compile Include="Domain\Entities\User.cs" />
     <Compile Include="Domain\ValueObjects\Address.cs" />
     <Compile Include="Domain\ValueObjects\EventHistoryItem.cs" />
+    <Compile Include="Handlers\Command\Companies\CreateCompanyHandler.cs" />
     <Compile Include="Handlers\Command\Invoices\AddLineItemHandler.cs" />
     <Compile Include="Handlers\Command\Invoices\CreateInvoiceHandler.cs" />
     <Compile Include="Handlers\Command\Payments\ApplyPaymentHandler.cs" />
@@ -83,7 +89,10 @@
     <Compile Include="Handlers\Command\Payments\UnapplyPaymentHandler.cs" />
     <Compile Include="Handlers\Command\Reports\PrintReportHandler.cs" />
     <Compile Include="Handlers\Command\Users\CreateUserHandler.cs" />
+    <Compile Include="Handlers\Event\CompanyEventHandlers.cs" />
     <Compile Include="Handlers\Event\InvoiceEventHandlers.cs" />
+    <Compile Include="Handlers\Event\UserEventHandlers.cs" />
+    <Compile Include="Handlers\Query\Companies\GetCompanyHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceForLineItemHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceHistoryHandler.cs" />
@@ -92,6 +101,7 @@
     <Compile Include="Handlers\Query\Reports\GetReportHandler.cs" />
     <Compile Include="Handlers\Query\Users\GetUserHandler.cs" />
     <Compile Include="Handlers\Query\Users\SearchUsersHandler.cs" />
+    <Compile Include="Messages\Commands\Companies\CreateCompany.cs" />
     <Compile Include="Messages\Commands\Invoices\AddLineItem.cs" />
     <Compile Include="Messages\Commands\Invoices\CreateInvoice.cs" />
     <Compile Include="Messages\Commands\Payments\ApplyPayment.cs" />
@@ -99,6 +109,7 @@
     <Compile Include="Messages\Commands\Payments\UnapplyPayment.cs" />
     <Compile Include="Messages\Commands\Reports\PrintReport.cs" />
     <Compile Include="Messages\Commands\Users\CreateUser.cs" />
+    <Compile Include="Messages\Events\Companies\CompanyCreated.cs" />
     <Compile Include="Messages\Events\IEvent.cs" />
     <Compile Include="Messages\Events\Invoices\InvoiceBalanceUpdated.cs" />
     <Compile Include="Messages\Events\Invoices\InvoiceCreated.cs" />
@@ -111,6 +122,7 @@
     <Compile Include="Messages\Events\Payments\PaymentUnapplied.cs" />
     <Compile Include="Messages\Events\Reports\ReportPrinted.cs" />
     <Compile Include="Messages\Events\Users\UserCreated.cs" />
+    <Compile Include="Messages\Queries\Companies\GetCompany.cs" />
     <Compile Include="Messages\Queries\Invoices\GetInvoice.cs" />
     <Compile Include="Messages\Queries\Invoices\GetInvoiceForLineItem.cs" />
     <Compile Include="Messages\Queries\Invoices\GetInvoiceHistory.cs" />

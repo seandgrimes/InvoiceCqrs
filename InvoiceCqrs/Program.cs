@@ -1,4 +1,7 @@
-﻿using InvoiceCqrs.Decorators;
+﻿using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using InvoiceCqrs.Decorators;
 using InvoiceCqrs.Persistence.EventStore;
 using InvoiceCqrs.Util;
 using InvoiceCqrs.Validation;
@@ -34,6 +37,7 @@ namespace InvoiceCqrs
                 cfg.For<Application>().Use<Application>().Singleton();
                 cfg.For<IInvoiceEventVisitor>().Use<InvoiceHistoryVisitor>();
                 cfg.For<IGuidGenerator>().Use<SequentialGuidGenerator>();
+                cfg.For<IDbConnection>().Singleton().Use(c => new SqlConnection(ConfigurationManager.ConnectionStrings["default"].ConnectionString));
 
                 cfg.For(typeof(IRequestHandler<,>)).DecorateAllWith(typeof(CommandValidationDecorator<,>));
             });

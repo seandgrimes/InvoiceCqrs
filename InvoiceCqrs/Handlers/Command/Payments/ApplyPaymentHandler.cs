@@ -1,8 +1,6 @@
-﻿using InvoiceCqrs.Messages.Commands;
-using InvoiceCqrs.Messages.Commands.Payments;
+﻿using InvoiceCqrs.Messages.Commands.Payments;
 using InvoiceCqrs.Messages.Events.Invoices;
 using InvoiceCqrs.Messages.Events.Payments;
-using InvoiceCqrs.Messages.Queries;
 using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Persistence.EventStore;
 using MediatR;

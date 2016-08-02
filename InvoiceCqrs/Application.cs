@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using InvoiceCqrs.Domain.Entities;
+using InvoiceCqrs.Messages.Commands.Companies;
 using InvoiceCqrs.Messages.Commands.Invoices;
 using InvoiceCqrs.Messages.Commands.Payments;
 using InvoiceCqrs.Messages.Commands.Reports;
 using InvoiceCqrs.Messages.Commands.Users;
 using InvoiceCqrs.Messages.Queries.Invoices;
-using InvoiceCqrs.Persistence;
 using InvoiceCqrs.Util;
 using MediatR;
 
@@ -25,10 +25,31 @@ namespace InvoiceCqrs
 
         public void Run()
         {
+            var company = _Mediator.Send(new CreateCompany
+            {
+                Addr1 = "123 Main Street",
+                Addr2 = string.Empty,
+                City = "Shreveport",
+                CompanyId = _GuidGenerator.Generate(),
+                Name = "Test Company",
+                State = "LA",
+                ZipCode = "71101"
+            });
+
+            var user = _Mediator.Send(new CreateUser
+            {
+                Email = "test.user@example.com",
+                FirstName = "Test",
+                Id = _GuidGenerator.Generate(),
+                LastName = "User"
+            });
+
             var invoice = _Mediator.Send(new CreateInvoice
             {
+                CompanyId = company.Id,
+                CreatedById = user.Id,
                 Id = _GuidGenerator.Generate(),
-                InvoiceNumber = Guid.NewGuid().ToString("N").Substring(10)
+                InvoiceNumber = Guid.NewGuid().ToString("N").Substring(0, 10)
             });
 
             var lineItem1 = _Mediator.Send(new AddLineItem
@@ -36,7 +57,8 @@ namespace InvoiceCqrs
                 Id = _GuidGenerator.Generate(),
                 InvoiceId = invoice.Id,
                 Amount = 25,
-                Description = "Fee 1"
+                Description = "Fee 1",
+                CreatedById = user.Id
             });
 
             var lineItem2 = _Mediator.Send(new AddLineItem
@@ -44,7 +66,8 @@ namespace InvoiceCqrs
                 Id = _GuidGenerator.Generate(),
                 InvoiceId = invoice.Id,
                 Amount = 50,
-                Description = "Fee 2"
+                Description = "Fee 2",
+                CreatedById = user.Id
             });
 
             var payment = _Mediator.Send(new ReceivePayment
@@ -69,14 +92,6 @@ namespace InvoiceCqrs
                 PaymentId = payment.Id
             });
 
-            var user = _Mediator.Send(new CreateUser
-            {
-                Email = "test.user@example.com",
-                FirstName = "Test",
-                Id = _GuidGenerator.Generate(),
-                LastName = "User"
-            });
-
             _Mediator.Send(new PrintReport
             {
                 PrintedById = user.Id,
@@ -90,7 +105,9 @@ namespace InvoiceCqrs
                 InvoiceId = invoice.Id
             });
 
-            Console.WriteLine(ReadModel.Invoices[invoice.Id]);
+            var readModelInvoice = _Mediator.Send(new GetInvoice {Id = invoice.Id});
+
+            Console.WriteLine(readModelInvoice);
             invoiceHistory.ToList().ForEach(history => Console.WriteLine($"{history.EventDate}: {history.Message}"));
         }
     }

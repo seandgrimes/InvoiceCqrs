@@ -17,12 +17,15 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 
         public DateTime EventDateTime { get; } = DateTime.Now;
 
+        public Guid CreatedById { get; set; }
+
         public void Apply(LineItem target)
         {
             target.Amount = Amount;
             target.Id = Id;
             target.Description = Description;
             target.InvoiceId = InvoiceId;
+            target.CreatedBy = new User {Id = CreatedById};
         }
 
         public void Accept(IInvoiceEventVisitor visitor)
