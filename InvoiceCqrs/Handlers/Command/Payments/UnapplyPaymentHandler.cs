@@ -1,8 +1,6 @@
-﻿using InvoiceCqrs.Messages.Commands;
-using InvoiceCqrs.Messages.Commands.Payments;
+﻿using InvoiceCqrs.Messages.Commands.Payments;
 using InvoiceCqrs.Messages.Events.Invoices;
 using InvoiceCqrs.Messages.Events.Payments;
-using InvoiceCqrs.Messages.Queries;
 using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Persistence.EventStore;
 using MediatR;
@@ -36,6 +34,12 @@ namespace InvoiceCqrs.Handlers.Command.Payments
                 Amount = message.Amount,
                 InvoiceId = invoice.Id,
                 LineItemId = message.LineItemId,
+                PaymentId = message.PaymentId
+            });
+
+            _Stream.Write(invoice.Id, new PaymentBalanceUpdated
+            {
+                Amount = message.Amount,
                 PaymentId = message.PaymentId
             });
 

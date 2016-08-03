@@ -91,6 +91,7 @@
     <Compile Include="Handlers\Command\Users\CreateUserHandler.cs" />
     <Compile Include="Handlers\Event\UpdateCompanyReadModelEventHandlers.cs" />
     <Compile Include="Handlers\Event\UpdateInvoiceReadModelEventHandlers.cs" />
+    <Compile Include="Handlers\Event\UpdatePaymentReadModelEventHandlers.cs" />
     <Compile Include="Handlers\Event\UpdateUserReadModelEventHandlers.cs" />
     <Compile Include="Handlers\Query\Companies\GetCompanyHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceForLineItemHandler.cs" />

@@ -27,6 +27,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
             var events = _Stream.Events
                 .Where(evt => evt.ExternalId == message.InvoiceId)
                 .Select(evt => JsonConvert.DeserializeObject(evt.JsonContent, evt.EventType) as IVisitable<IInvoiceEventVisitor>)
+                .Where(evt => evt != null)
                 .ToList();
 
             _InvoiceVisitor.Visit(events);

@@ -74,7 +74,8 @@ namespace InvoiceCqrs
             {
                 Id = _GuidGenerator.Generate(),
                 Amount = 100,
-                ReceivedOn = DateTime.Now
+                ReceivedOn = DateTime.Now,
+                ReceivedById = user.Id
             });
 
             _Mediator.Send(new ApplyPayment

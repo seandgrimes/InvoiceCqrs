@@ -9,6 +9,8 @@ namespace InvoiceCqrs.Messages.Events.Payments
 
         public DateTime ReceivedOn { get; set; }
 
+        public Guid ReceivedById { get; set; }
+
         public decimal Amount { get; set; }
 
         public DateTime EventDateTime { get; } = DateTime.Now;
@@ -17,6 +19,7 @@ namespace InvoiceCqrs.Messages.Events.Payments
         {
             target.Id = Id;
             target.ReceivedOn = ReceivedOn;
+            target.ReceivedBy = new User {Id = ReceivedById};
             target.Balance = Amount;
             target.Amount = Amount;
         }

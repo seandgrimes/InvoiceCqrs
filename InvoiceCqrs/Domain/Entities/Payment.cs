@@ -8,6 +8,8 @@ namespace InvoiceCqrs.Domain.Entities
 
         public User ReceivedBy { get; set; }
 
+        public Guid ReceivedById { get; set; }
+
         public decimal Amount { get; set; }
 
         public decimal Balance { get; set; }

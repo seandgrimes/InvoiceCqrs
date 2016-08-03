@@ -10,6 +10,8 @@ namespace InvoiceCqrs.Messages.Commands.Payments
 
         public DateTime ReceivedOn { get; set; }
 
+        public Guid ReceivedById { get; set; }
+
         public decimal Amount { get; set; }
     }
 }
