@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using InvoiceCqrs.Persistence.EventStore.Util;
 using MediatR;
 using Newtonsoft.Json;
 
@@ -18,6 +20,7 @@ namespace InvoiceCqrs.Persistence.EventStore
             Name = streamName;
         }
 
+        [Obsolete("Use the fluent builder overload of Stream.Write instead")]
         public TEvent Write<TEvent>(Guid externalId, TEvent evt) where TEvent : INotification
         {
             Events.Add(new Event
@@ -30,6 +33,21 @@ namespace InvoiceCqrs.Persistence.EventStore
             _Mediator.Publish(evt);
 
             return evt;
+        }
+
+        public TEvent Write<TEvent>(Expression<Action<EventBuilder<TEvent>>> buildExpr) where TEvent : INotification
+        {
+            var builder = new EventBuilder<TEvent>();
+            var action = buildExpr.Compile();
+
+            action(builder);
+
+            var evt = builder.Build();
+            Events.Add(evt);
+
+            _Mediator.Publish(builder.Event);
+
+            return builder.Event;
         }
     }
 }

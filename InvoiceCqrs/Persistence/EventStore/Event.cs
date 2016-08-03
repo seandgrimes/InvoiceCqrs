@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace InvoiceCqrs.Persistence.EventStore
 {
@@ -10,6 +11,6 @@ namespace InvoiceCqrs.Persistence.EventStore
 
         public string JsonContent { get; set; }
 
-        
+        public IDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
     }
 }

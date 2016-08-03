@@ -10,27 +10,33 @@ namespace InvoiceCqrs.Handlers.Command.Companies
 {
     public class CreateCompanyHandler : IRequestHandler<CreateCompany, Company>
     {
+        private readonly Stream _EventStream;
         private readonly IMediator _Mediator;
-        private readonly Stream _Stream;
 
         public CreateCompanyHandler(Store store, IMediator mediator)
         {
             _Mediator = mediator;
-            _Stream = store.Open(Streams.Companies);
+            _EventStream = store.Open(Streams.Companies);
         }
 
         public Company Handle(CreateCompany message)
         {
-            _Stream.Write(message.CompanyId, new CompanyCreated
-            {
-                Addr1 = message.Addr1,
-                Addr2 = message.Addr2,
-                City = message.City,
-                CompanyId = message.CompanyId,
-                Name = message.Name,
-                State = message.State,
-                ZipCode = message.ZipCode
-            });
+            _EventStream.Write<CompanyCreated>(builder => builder
+                .WithCorrelationId(message.CompanyId)
+                .WithEvent(new CompanyCreated
+                {
+                    Addr1 = message.Addr1,
+                    Addr2 = message.Addr2,
+                    City = message.City,
+                    CompanyId = message.CompanyId,
+                    Name = message.Name,
+                    State = message.State,
+                    ZipCode = message.ZipCode
+                })
+                .WithMetaData(evt => new
+                {
+                    evt.CompanyId
+                }));
 
             return _Mediator.Send(new GetCompany {CompanyId = message.CompanyId});
         }

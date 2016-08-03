@@ -141,6 +141,8 @@
     <Compile Include="Persistence\EventStore\Store.cs" />
     <Compile Include="Persistence\EventStore\Stream.cs" />
     <Compile Include="Persistence\EventStore\Streams.cs" />
+    <Compile Include="Persistence\EventStore\Util\EventBuilder.cs" />
+    <Compile Include="Persistence\EventStore\Util\ObjectToPropertyDictionaryMapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\IGuidGenerator.cs" />
