@@ -5,11 +5,11 @@ using MediatR;
 
 namespace InvoiceCqrs.Handlers.Event
 {
-    public class CompanyEventHandlers : INotificationHandler<CompanyCreated>
+    public class UpdateCompanyReadModelEventHandlers : INotificationHandler<CompanyCreated>
     {
         private readonly IDbConnection _DbConnection;
 
-        public CompanyEventHandlers(IDbConnection dbConnection)
+        public UpdateCompanyReadModelEventHandlers(IDbConnection dbConnection)
         {
             _DbConnection = dbConnection;
         }

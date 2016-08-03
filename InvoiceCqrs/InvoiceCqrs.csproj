@@ -89,9 +89,9 @@
     <Compile Include="Handlers\Command\Payments\UnapplyPaymentHandler.cs" />
     <Compile Include="Handlers\Command\Reports\PrintReportHandler.cs" />
     <Compile Include="Handlers\Command\Users\CreateUserHandler.cs" />
-    <Compile Include="Handlers\Event\CompanyEventHandlers.cs" />
-    <Compile Include="Handlers\Event\InvoiceEventHandlers.cs" />
-    <Compile Include="Handlers\Event\UserEventHandlers.cs" />
+    <Compile Include="Handlers\Event\UpdateCompanyReadModelEventHandlers.cs" />
+    <Compile Include="Handlers\Event\UpdateInvoiceReadModelEventHandlers.cs" />
+    <Compile Include="Handlers\Event\UpdateUserReadModelEventHandlers.cs" />
     <Compile Include="Handlers\Query\Companies\GetCompanyHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceForLineItemHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceHandler.cs" />

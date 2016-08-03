@@ -9,11 +9,10 @@ using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Persistence;
 using InvoiceCqrs.Persistence.EventStore;
 using MediatR;
-using StructureMap.Building;
 
 namespace InvoiceCqrs.Handlers.Event
 {
-    public class InvoiceEventHandlers : INotificationHandler<InvoiceCreated>, INotificationHandler<LineItemAdded>, INotificationHandler<PaymentApplied>,
+    public class UpdateInvoiceReadModelEventHandlers : INotificationHandler<InvoiceCreated>, INotificationHandler<LineItemAdded>, INotificationHandler<PaymentApplied>,
         INotificationHandler<PaymentUnapplied>, INotificationHandler<PaymentReceived>, INotificationHandler<InvoiceBalanceUpdated>,
         INotificationHandler<ReportPrinted>
     {
@@ -21,7 +20,7 @@ namespace InvoiceCqrs.Handlers.Event
         private readonly IDbConnection _DbConnection;
         private readonly Stream _InvoiceStream;
 
-        public InvoiceEventHandlers(IMediator mediator, Store store, IDbConnection dbConnection)
+        public UpdateInvoiceReadModelEventHandlers(IMediator mediator, Store store, IDbConnection dbConnection)
         {
             _Mediator = mediator;
             _DbConnection = dbConnection;
