@@ -34,13 +34,15 @@ namespace InvoiceCqrs.Handlers.Command.Payments
                 Amount = message.Amount,
                 InvoiceId = invoice.Id,
                 LineItemId = message.LineItemId,
-                PaymentId = message.PaymentId
+                PaymentId = message.PaymentId,
+                UpdatedById = message.UnappliedById
             });
 
             _Stream.Write(invoice.Id, new PaymentBalanceUpdated
             {
                 Amount = message.Amount,
-                PaymentId = message.PaymentId
+                PaymentId = message.PaymentId,
+                UpdatedById = message.UnappliedById
             });
 
             return true;

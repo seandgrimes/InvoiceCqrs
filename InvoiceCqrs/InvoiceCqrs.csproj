@@ -81,6 +81,7 @@
     <Compile Include="Domain\Entities\User.cs" />
     <Compile Include="Domain\ValueObjects\Address.cs" />
     <Compile Include="Domain\ValueObjects\EventHistoryItem.cs" />
+    <Compile Include="Extensions\SearchOptionsExtensions.cs" />
     <Compile Include="Handlers\Command\Companies\CreateCompanyHandler.cs" />
     <Compile Include="Handlers\Command\Invoices\AddLineItemHandler.cs" />
     <Compile Include="Handlers\Command\Invoices\CreateInvoiceHandler.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Handlers\Query\Invoices\GetInvoiceForLineItemHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceHistoryHandler.cs" />
+    <Compile Include="Handlers\Query\Invoices\GetInvoicesHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetLineItemHandler.cs" />
     <Compile Include="Handlers\Query\Payments\GetPaymentHandler.cs" />
     <Compile Include="Handlers\Query\Reports\GetReportHandler.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Messages\Queries\Invoices\GetInvoice.cs" />
     <Compile Include="Messages\Queries\Invoices\GetInvoiceForLineItem.cs" />
     <Compile Include="Messages\Queries\Invoices\GetInvoiceHistory.cs" />
+    <Compile Include="Messages\Queries\Invoices\GetInvoices.cs" />
     <Compile Include="Messages\Queries\Invoices\GetLineItem.cs" />
     <Compile Include="Messages\Queries\Payments\GetPayment.cs" />
     <Compile Include="Messages\Queries\Reports\GetReport.cs" />
@@ -138,7 +141,6 @@
     <Compile Include="Persistence\EventStore\Store.cs" />
     <Compile Include="Persistence\EventStore\Stream.cs" />
     <Compile Include="Persistence\EventStore\Streams.cs" />
-    <Compile Include="Persistence\ReadModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\IGuidGenerator.cs" />

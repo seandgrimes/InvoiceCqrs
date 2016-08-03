@@ -5,6 +5,7 @@ using InvoiceCqrs.Messages.Commands.Invoices;
 using InvoiceCqrs.Messages.Queries.Companies;
 using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Messages.Queries.Users;
+using InvoiceCqrs.Messages.Shared;
 using InvoiceCqrs.Persistence;
 using MediatR;
 
@@ -61,8 +62,14 @@ namespace InvoiceCqrs.Validation.Commands.Invoices
                 errors.Add("Must specify a value for the InvoiceNumber property");
             }
 
-            if (!string.IsNullOrEmpty(entity.InvoiceNumber) &&
-                ReadModel.Invoices.Values.Any(i => i.InvoiceNumber == entity.InvoiceNumber))
+            var invoices = _Mediator.Send(new GetInvoices
+            {
+                CompanyId = entity.CompanyId,
+                InvoiceNumber = entity.InvoiceNumber,
+                SearchOption = SearchOptions.MatchAll
+            });
+
+            if (!string.IsNullOrEmpty(entity.InvoiceNumber) && invoices.Any())
             {
                 errors.Add($"An invoice number of {entity.InvoiceNumber} already exists");
             }

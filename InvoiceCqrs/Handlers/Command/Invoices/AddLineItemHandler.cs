@@ -33,7 +33,8 @@ namespace InvoiceCqrs.Handlers.Command.Invoices
             {
                 Amount = message.Amount,
                 InvoiceId = message.InvoiceId,
-                LineItemId = message.Id
+                LineItemId = message.Id,
+                UpdatedById = message.CreatedById
             });
 
             return _Mediator.Send(new GetLineItem

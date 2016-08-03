@@ -7,6 +7,8 @@ namespace InvoiceCqrs.Messages.Commands.Payments
     {
         public decimal Amount { get; set; }
 
+        public Guid AppliedById { get; set; }
+
         public Guid Id { get; set; }
 
         public Guid LineItemId { get; set; }

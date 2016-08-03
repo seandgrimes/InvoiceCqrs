@@ -24,6 +24,7 @@ namespace InvoiceCqrs.Migrations
             CreateTableTable();
             CreateCompanyTable();
             CreateUserTable();
+            CreateReportTable();
 
             CreateStreamTable();
             CreateEventTable();

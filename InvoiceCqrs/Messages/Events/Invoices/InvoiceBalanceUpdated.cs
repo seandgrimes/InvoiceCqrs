@@ -17,6 +17,8 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 
         public Guid PaymentId { get; set; }
 
+        public Guid UpdatedById { get; set; }
+
         public void Accept(IInvoiceEventVisitor visitor)
         {
             visitor.Visit(this);

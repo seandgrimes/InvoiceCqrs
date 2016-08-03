@@ -40,7 +40,8 @@ namespace InvoiceCqrs.Handlers.Command.Payments
                 Amount = -1 * message.Amount,
                 InvoiceId = invoice.Id,
                 LineItemId = message.LineItemId,
-                PaymentId = message.PaymentId
+                PaymentId = message.PaymentId,
+                UpdatedById = message.AppliedById
             });
 
             _Stream.Write(message.PaymentId, new PaymentBalanceUpdated

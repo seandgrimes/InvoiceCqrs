@@ -8,6 +8,10 @@ namespace InvoiceCqrs.Domain.Entities
 {
     public class GeneralLedgerEntry : Entity
     {
+        public Guid CreatedById { get; set; }
+
+        public DateTime CreatedOn { get; set; }
+
         public Guid LineItemId { get; set; }
 
         public decimal CreditAmount { get; set; }

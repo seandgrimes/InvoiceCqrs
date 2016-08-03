@@ -10,5 +10,7 @@ namespace InvoiceCqrs.Messages.Commands.Payments
         public Guid LineItemId { get; set; }
 
         public Guid PaymentId { get; set; }
+
+        public Guid UnappliedById { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using InvoiceCqrs.Messages.Events.Reports;
 using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Persistence;
 using InvoiceCqrs.Persistence.EventStore;
+using InvoiceCqrs.Util;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Event
@@ -16,12 +17,14 @@ namespace InvoiceCqrs.Handlers.Event
     {
         private readonly IMediator _Mediator;
         private readonly IDbConnection _DbConnection;
+        private readonly IGuidGenerator _GuidGenerator;
         private readonly Stream _InvoiceStream;
 
-        public UpdateInvoiceReadModelEventHandlers(IMediator mediator, Store store, IDbConnection dbConnection)
+        public UpdateInvoiceReadModelEventHandlers(IMediator mediator, Store store, IDbConnection dbConnection, IGuidGenerator guidGenerator)
         {
             _Mediator = mediator;
             _DbConnection = dbConnection;
+            _GuidGenerator = guidGenerator;
             _InvoiceStream = store.Open(Streams.Invoices);
         }
 
@@ -86,11 +89,17 @@ namespace InvoiceCqrs.Handlers.Event
                 CreditAmount = notification.Amount > 0 ? notification.Amount : 0,
                 DebitAmount = notification.Amount < 0 ? notification.Amount : 0,
                 EntryDate = notification.EventDateTime,
-                Id = Guid.NewGuid(),
-                LineItemId = notification.LineItemId
+                Id = _GuidGenerator.Generate(),
+                LineItemId = notification.LineItemId,
+                CreatedOn = notification.EventDateTime,
+                CreatedById = notification.UpdatedById
             };
 
-            ReadModel.GeneralLedgerEntries[ledgerEntry.Id] = ledgerEntry;
+            const string query2 = @"
+                INSERT INTO Accounting.GeneralLedger (Id, CreditAmount, DebitAmount, LineItemId, CreatedOn, CreatedById)
+                VALUES (@Id, @CreditAmount, @DebitAmount, @LineItemId, @CreatedOn, @CreatedById)";
+
+            _DbConnection.Execute(query2, ledgerEntry);
         }
 
         public void Handle(ReportPrinted notification)

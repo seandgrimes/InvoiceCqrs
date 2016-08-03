@@ -83,14 +83,16 @@ namespace InvoiceCqrs
                 Id = _GuidGenerator.Generate(),
                 Amount = 25,
                 LineItemId = lineItem1.Id,
-                PaymentId = payment.Id
+                PaymentId = payment.Id,
+                AppliedById = user.Id
             });
 
             _Mediator.Send(new UnapplyPayment
             {
                 Amount = 25,
                 LineItemId = lineItem1.Id,
-                PaymentId = payment.Id
+                PaymentId = payment.Id,
+                UnappliedById = user.Id
             });
 
             _Mediator.Send(new PrintReport
