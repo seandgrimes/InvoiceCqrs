@@ -15,7 +15,7 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 
         public decimal Amount { get; set; }
 
-        public DateTime EventDateTime { get; } = DateTime.Now;
+        public DateTime EventDate { get; } = DateTime.UtcNow;
 
         public Guid CreatedById { get; set; }
 

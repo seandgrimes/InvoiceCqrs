@@ -10,7 +10,6 @@ using InvoiceCqrs.Messages.Queries.Users;
 using MediatR;
 
 namespace InvoiceCqrs.Visitors.Invoices
-
 {
     public class InvoiceHistoryVisitor : IInvoiceEventVisitor
     {
@@ -29,7 +28,7 @@ namespace InvoiceCqrs.Visitors.Invoices
         {
             return new EventHistoryItem
             {
-                EventDate = evt.EventDateTime,
+                EventDate = evt.EventDate,
                 EventType = evt.GetType()
             };
         }

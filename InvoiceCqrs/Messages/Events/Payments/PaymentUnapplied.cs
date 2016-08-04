@@ -13,7 +13,7 @@ namespace InvoiceCqrs.Messages.Events.Payments
 
         public decimal Amount { get; set; }
 
-        public DateTime EventDateTime { get; } = DateTime.Now;
+        public DateTime EventDate { get; } = DateTime.UtcNow;
 
         public void Accept(IInvoiceEventVisitor visitor)
         {

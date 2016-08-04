@@ -9,7 +9,7 @@ namespace InvoiceCqrs.Messages.Events
 {
     public interface IEvent : INotification
     {
-        DateTime EventDateTime { get; }
+        DateTime EventDate { get; }
     }
 
     public interface IEvent<in TTarget> : IEvent

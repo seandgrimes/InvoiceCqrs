@@ -18,7 +18,7 @@ namespace InvoiceCqrs.Handlers.Event
         {
             const string query =
                 "INSERT INTO Users.[User] (Id, Email, FirstName, LastName, CreatedOn) " +
-                "VALUES (@UserId, @Email, @FirstName, @LastName, @EventDateTime)";
+                "VALUES (@UserId, @Email, @FirstName, @LastName, @EventDate)";
 
             _DbConnection.Execute(query, notification);
         }

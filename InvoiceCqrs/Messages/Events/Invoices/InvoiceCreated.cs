@@ -11,6 +11,8 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 
         public Guid CreatedById { get; set; }
 
+        public DateTime EventDate { get; } = DateTime.UtcNow;
+
         public Guid Id { get; set; }
 
         public string InvoiceNumber { get; set; }
@@ -19,8 +21,6 @@ namespace InvoiceCqrs.Messages.Events.Invoices
         {
             visitor.Visit(this);
         }
-
-        public DateTime EventDateTime { get; } = DateTime.Now;
 
         public void Apply(Invoice target)
         {

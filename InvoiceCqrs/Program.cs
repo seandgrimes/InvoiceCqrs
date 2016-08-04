@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SqlClient;
 using InvoiceCqrs.Decorators;
 using InvoiceCqrs.Persistence.EventStore;
+using InvoiceCqrs.Persistence.EventStore.Util;
 using InvoiceCqrs.Util;
 using InvoiceCqrs.Validation;
 using InvoiceCqrs.Visitors.Invoices;
@@ -38,6 +39,8 @@ namespace InvoiceCqrs
                 cfg.For<IInvoiceEventVisitor>().Use<InvoiceHistoryVisitor>();
                 cfg.For<IGuidGenerator>().Use<SequentialGuidGenerator>();
                 cfg.For<IDbConnection>().Singleton().Use(c => new SqlConnection(ConfigurationManager.ConnectionStrings["default"].ConnectionString));
+
+                cfg.For<IEventHydrator>().Use<EventHydrator>();
 
                 cfg.For(typeof(IRequestHandler<,>)).DecorateAllWith(typeof(CommandValidationDecorator<,>));
             });

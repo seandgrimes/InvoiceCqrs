@@ -72,6 +72,8 @@
     <Compile Include="Decorators\CommandValidationDecorator.cs" />
     <Compile Include="Domain\Entities\Company.cs" />
     <Compile Include="Domain\Entities\Entity.cs" />
+    <Compile Include="Domain\Entities\EventStore\Event.cs" />
+    <Compile Include="Domain\Entities\EventStore\EventMetadata.cs" />
     <Compile Include="Domain\Entities\GeneralLedgerEntry.cs" />
     <Compile Include="Domain\Entities\Invoice.cs" />
     <Compile Include="Domain\Entities\LineItem.cs" />
@@ -83,6 +85,7 @@
     <Compile Include="Domain\ValueObjects\EventHistoryItem.cs" />
     <Compile Include="Extensions\SearchOptionsExtensions.cs" />
     <Compile Include="Handlers\Command\Companies\CreateCompanyHandler.cs" />
+    <Compile Include="Handlers\Command\EventStore\AddEventHandler.cs" />
     <Compile Include="Handlers\Command\Invoices\AddLineItemHandler.cs" />
     <Compile Include="Handlers\Command\Invoices\CreateInvoiceHandler.cs" />
     <Compile Include="Handlers\Command\Payments\ApplyPaymentHandler.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="Handlers\Query\Users\GetUserHandler.cs" />
     <Compile Include="Handlers\Query\Users\SearchUsersHandler.cs" />
     <Compile Include="Messages\Commands\Companies\CreateCompany.cs" />
+    <Compile Include="Messages\Commands\EventStore\AddEvent.cs" />
     <Compile Include="Messages\Commands\Invoices\AddLineItem.cs" />
     <Compile Include="Messages\Commands\Invoices\CreateInvoice.cs" />
     <Compile Include="Messages\Commands\Payments\ApplyPayment.cs" />
@@ -142,6 +146,8 @@
     <Compile Include="Persistence\EventStore\Stream.cs" />
     <Compile Include="Persistence\EventStore\Streams.cs" />
     <Compile Include="Persistence\EventStore\Util\EventBuilder.cs" />
+    <Compile Include="Persistence\EventStore\Util\EventHydrator.cs" />
+    <Compile Include="Persistence\EventStore\Util\IEventHydrator.cs" />
     <Compile Include="Persistence\EventStore\Util\ObjectToPropertyDictionaryMapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -10,7 +10,7 @@ namespace InvoiceCqrs.Messages.Events.Users
     {
         public string Email { get; set; }
 
-        public DateTime EventDateTime { get; } = DateTime.Now;
+        public DateTime EventDate { get; } = DateTime.UtcNow;
 
         public string FirstName { get; set; }
 

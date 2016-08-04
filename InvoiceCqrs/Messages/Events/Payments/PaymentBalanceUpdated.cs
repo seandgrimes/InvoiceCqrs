@@ -7,7 +7,7 @@ namespace InvoiceCqrs.Messages.Events.Payments
     {
         public decimal Amount { get; set; }
         
-        public DateTime EventDateTime { get; } = DateTime.UtcNow;
+        public DateTime EventDate { get; } = DateTime.UtcNow;
 
         public Guid PaymentId { get; set; }
 

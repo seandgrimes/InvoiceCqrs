@@ -1,38 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using AutoMapper;
+using InvoiceCqrs.Messages.Commands.EventStore;
 using InvoiceCqrs.Persistence.EventStore.Util;
+using InvoiceCqrs.Util;
 using MediatR;
-using Newtonsoft.Json;
 
 namespace InvoiceCqrs.Persistence.EventStore
 {
     public class Stream
     {
+        private readonly IMapper _Mapper;
         private readonly IMediator _Mediator;
+        private readonly IGuidGenerator _GuidGenerator;
+        private readonly Guid _StreamId;
+
+
         public IList<Event> Events { get; set; } = new List<Event>();
 
-        public string Name { get; private set; }
-
-        public Stream(string streamName, IMediator mediator)
+        public Stream(Guid streamId, IMediator mediator, IGuidGenerator guidGenerator)
         {
+            _StreamId = streamId;
             _Mediator = mediator;
-            Name = streamName;
-        }
+            _GuidGenerator = guidGenerator;
 
-        [Obsolete("Use the fluent builder overload of Stream.Write instead")]
-        public TEvent Write<TEvent>(Guid externalId, TEvent evt) where TEvent : INotification
-        {
-            Events.Add(new Event
+            var mapperCfg = new MapperConfiguration(cfg =>
             {
-                ExternalId = externalId,
-                JsonContent = JsonConvert.SerializeObject(evt),
-                EventType = evt.GetType()
+                cfg.CreateMap<Event, AddEvent>()
+                    .ForMember(dest => dest.CorrelationId, opt => opt.MapFrom(src => src.ExternalId))
+                    .ForMember(dest => dest.Json, opt => opt.MapFrom(src => src.JsonContent));
             });
 
-            _Mediator.Publish(evt);
-
-            return evt;
+            _Mapper = mapperCfg.CreateMapper();
         }
 
         public TEvent Write<TEvent>(Expression<Action<EventBuilder<TEvent>>> buildExpr) where TEvent : INotification
@@ -43,11 +43,22 @@ namespace InvoiceCqrs.Persistence.EventStore
             action(builder);
 
             var evt = builder.Build();
+            evt.EventDate = DateTime.UtcNow;
+            evt.EventId = _GuidGenerator.Generate();
+            evt.StreamId = _StreamId;
+
             Events.Add(evt);
+            PersistEvent(evt);
 
             _Mediator.Publish(builder.Event);
 
             return builder.Event;
+        }
+
+        private void PersistEvent(Event evt)
+        {
+            var eventEntity = _Mapper.Map<AddEvent>(evt);
+            _Mediator.Send(eventEntity);
         }
     }
 }

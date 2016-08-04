@@ -7,7 +7,7 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 {
     public class LineItemPaid : IEvent<LineItem>, IVisitable<IInvoiceEventVisitor>
     {
-        public DateTime EventDateTime { get; } = DateTime.Now;
+        public DateTime EventDate { get; } = DateTime.UtcNow;
 
         public Guid LineItemId { get; set; }
 

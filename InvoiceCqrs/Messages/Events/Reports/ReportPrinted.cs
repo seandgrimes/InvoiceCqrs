@@ -5,7 +5,7 @@ namespace InvoiceCqrs.Messages.Events.Reports
 {
     public class ReportPrinted : IEvent
     {
-        public DateTime EventDateTime { get; } = DateTime.Now;
+        public DateTime EventDate { get; } = DateTime.UtcNow;
 
         public bool IsReprint { get; set; }
 

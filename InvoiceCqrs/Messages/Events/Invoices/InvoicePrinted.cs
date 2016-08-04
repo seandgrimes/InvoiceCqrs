@@ -7,6 +7,8 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 {
     public class InvoicePrinted : IEvent, IVisitable<IInvoiceEventVisitor>
     {
+        public DateTime EventDate { get; } = DateTime.UtcNow;
+
         public Guid InvoiceId { get; set; }
 
         public bool IsReprint { get; set; }
@@ -14,8 +16,6 @@ namespace InvoiceCqrs.Messages.Events.Invoices
         public Guid ReportId { get; set; }
 
         public Guid PrintedById { get; set; }
-
-        public DateTime EventDateTime { get; } = DateTime.Now;
 
         public void Accept(IInvoiceEventVisitor visitor)
         {

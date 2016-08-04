@@ -10,7 +10,7 @@ namespace InvoiceCqrs.Messages.Events.Companies
 
         public string Addr2 { get; set; }
 
-        public DateTime EventDateTime { get; }
+        public DateTime EventDate { get; } = DateTime.UtcNow;
 
         public string City { get; set; }
 

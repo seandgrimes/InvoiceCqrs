@@ -1,11 +1,10 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
+using AutoMapper;
 using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Events.Invoices;
 using InvoiceCqrs.Messages.Events.Reports;
 using InvoiceCqrs.Messages.Queries.Invoices;
-using InvoiceCqrs.Persistence;
 using InvoiceCqrs.Persistence.EventStore;
 using InvoiceCqrs.Util;
 using MediatR;
@@ -15,6 +14,7 @@ namespace InvoiceCqrs.Handlers.Event
     public class UpdateInvoiceReadModelEventHandlers : INotificationHandler<InvoiceCreated>, INotificationHandler<LineItemAdded>, 
         INotificationHandler<InvoiceBalanceUpdated>, INotificationHandler<ReportPrinted>
     {
+        private readonly IMapper _Mapper;
         private readonly IMediator _Mediator;
         private readonly IDbConnection _DbConnection;
         private readonly IGuidGenerator _GuidGenerator;
@@ -26,6 +26,12 @@ namespace InvoiceCqrs.Handlers.Event
             _DbConnection = dbConnection;
             _GuidGenerator = guidGenerator;
             _InvoiceStream = store.Open(Streams.Invoices);
+
+            _Mapper = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<ReportPrinted, InvoicePrinted>()
+                    .ForMember(dest => dest.InvoiceId, opt => opt.MapFrom(src => src.RecordId));
+            }).CreateMapper();
         }
 
         public void Handle(InvoiceCreated notification)
@@ -44,7 +50,7 @@ namespace InvoiceCqrs.Handlers.Event
                 CreatedById = invoice.CreatedBy.Id,
                 invoice.InvoiceNumber,
                 CompanyId = invoice.Company.Id,
-                CreatedOn = notification.EventDateTime
+                CreatedOn = notification.EventDate
             });
         }
 
@@ -64,7 +70,7 @@ namespace InvoiceCqrs.Handlers.Event
                 lineItem.Description,
                 lineItem.Amount,
                 lineItem.IsPaid,
-                CreatedOn = notification.EventDateTime,
+                CreatedOn = notification.EventDate,
                 CreatedById = lineItem.CreatedBy.Id
             });
 
@@ -88,10 +94,10 @@ namespace InvoiceCqrs.Handlers.Event
             {
                 CreditAmount = notification.Amount > 0 ? notification.Amount : 0,
                 DebitAmount = notification.Amount < 0 ? notification.Amount : 0,
-                EntryDate = notification.EventDateTime,
+                EntryDate = notification.EventDate,
                 Id = _GuidGenerator.Generate(),
                 LineItemId = notification.LineItemId,
-                CreatedOn = notification.EventDateTime,
+                CreatedOn = notification.EventDate,
                 CreatedById = notification.UpdatedById
             };
 
@@ -111,13 +117,13 @@ namespace InvoiceCqrs.Handlers.Event
                 return;
             }
 
-            _InvoiceStream.Write(notification.RecordId, new InvoicePrinted
-            {
-                InvoiceId = notification.RecordId,
-                IsReprint = notification.IsReprint,
-                PrintedById = notification.PrintedById,
-                ReportId = notification.ReportId
-            });
+            _InvoiceStream.Write<InvoicePrinted>(builder => builder
+                .WithCorrelationId(notification.RecordId)
+                .WithEvent(_Mapper.Map<ReportPrinted, InvoicePrinted>(notification))
+                .WithMetaData(evt => new
+                {
+                    evt.ReportId
+                }));
         }
     }
 }

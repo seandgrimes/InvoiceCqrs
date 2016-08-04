@@ -3,9 +3,7 @@ using System.Linq;
 using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Domain.ValueObjects;
-using InvoiceCqrs.Messages.Queries;
 using InvoiceCqrs.Messages.Queries.Invoices;
-using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Invoices
