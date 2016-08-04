@@ -37,13 +37,11 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
             var events = _DbConnection.Query<Domain.Entities.EventStore.Event>(eventsQuery, message).ToList();
 
             var visitable = _EventHydrator.Hydrate(events)
-                .Select(evt => evt as IVisitable<IInvoiceEventVisitor>)
+                .Select(evt => evt as IVisitable<IInvoiceEventVisitor, EventHistoryItem>)
                 .Where(evt => evt != null)
                 .ToList();
 
-            _InvoiceVisitor.Visit(visitable);
-
-            return _InvoiceVisitor.EventHistory;
+            return _InvoiceVisitor.Visit(visitable);
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System;
 using InvoiceCqrs.Domain.Entities;
+using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Visitors;
 using InvoiceCqrs.Visitors.Invoices;
 
 namespace InvoiceCqrs.Messages.Events.Invoices
 {
-    public class LineItemPaid : IEvent<LineItem>, IVisitable<IInvoiceEventVisitor>
+    public class LineItemPaid : IEvent<LineItem>, IVisitable<IInvoiceEventVisitor, EventHistoryItem>
     {
         public DateTime EventDate { get; } = DateTime.UtcNow;
 
@@ -18,9 +19,9 @@ namespace InvoiceCqrs.Messages.Events.Invoices
             target.IsPaid = true;
         }
 
-        public void Accept(IInvoiceEventVisitor visitor)
+        public EventHistoryItem Accept(IInvoiceEventVisitor visitor)
         {
-            visitor.Visit(this);
+            return visitor.Visit(this);
         }
     }
 }

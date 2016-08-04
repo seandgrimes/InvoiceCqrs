@@ -1,11 +1,12 @@
 ﻿using System;
 using InvoiceCqrs.Domain.Entities;
+using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Visitors;
 using InvoiceCqrs.Visitors.Invoices;
 
 namespace InvoiceCqrs.Messages.Events.Invoices
 {
-    public class InvoiceCreated : IEvent<Invoice>, IVisitable<IInvoiceEventVisitor>
+    public class InvoiceCreated : IEvent<Invoice>, IVisitable<IInvoiceEventVisitor, EventHistoryItem>
     {
         public Guid CompanyId { get; set; }
 
@@ -17,9 +18,9 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 
         public string InvoiceNumber { get; set; }
 
-        public void Accept(IInvoiceEventVisitor visitor)
+        public EventHistoryItem Accept(IInvoiceEventVisitor visitor)
         {
-            visitor.Visit(this);
+            return visitor.Visit(this);
         }
 
         public void Apply(Invoice target)

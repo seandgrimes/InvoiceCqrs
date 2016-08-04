@@ -7,22 +7,20 @@ namespace InvoiceCqrs.Visitors.Invoices
 {
     public interface IInvoiceEventVisitor
     {
-        IList<EventHistoryItem> EventHistory { get; }
+        EventHistoryItem Visit(InvoiceCreated evt);
 
-        void Visit(InvoiceCreated evt);
+        EventHistoryItem Visit(InvoiceBalanceUpdated evt);
 
-        void Visit(InvoiceBalanceUpdated evt);
+        EventHistoryItem Visit(InvoicePrinted evt);
 
-        void Visit(InvoicePrinted evt);
+        EventHistoryItem Visit(LineItemAdded evt);
 
-        void Visit(LineItemAdded evt);
+        EventHistoryItem Visit(LineItemPaid evt);
 
-        void Visit(LineItemPaid evt);
+        EventHistoryItem Visit(PaymentApplied evt);
 
-        void Visit(PaymentApplied evt);
+        EventHistoryItem Visit(PaymentUnapplied evt);
 
-        void Visit(PaymentUnapplied evt);
-
-        IList<EventHistoryItem> Visit(IList<IVisitable<IInvoiceEventVisitor>> events);
+        IList<EventHistoryItem> Visit(IList<IVisitable<IInvoiceEventVisitor, EventHistoryItem>> events);
     }
 }

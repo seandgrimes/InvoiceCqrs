@@ -1,11 +1,11 @@
 ﻿using System;
-using InvoiceCqrs.Domain.Entities;
+using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Visitors;
 using InvoiceCqrs.Visitors.Invoices;
 
 namespace InvoiceCqrs.Messages.Events.Invoices
 {
-    public class InvoicePrinted : IEvent, IVisitable<IInvoiceEventVisitor>
+    public class InvoicePrinted : IEvent, IVisitable<IInvoiceEventVisitor, EventHistoryItem>
     {
         public DateTime EventDate { get; } = DateTime.UtcNow;
 
@@ -17,9 +17,9 @@ namespace InvoiceCqrs.Messages.Events.Invoices
 
         public Guid PrintedById { get; set; }
 
-        public void Accept(IInvoiceEventVisitor visitor)
+        public EventHistoryItem Accept(IInvoiceEventVisitor visitor)
         {
-            visitor.Visit(this);
+            return visitor.Visit(this);
         }
     }
 }

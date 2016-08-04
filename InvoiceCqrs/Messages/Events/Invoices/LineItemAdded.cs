@@ -1,11 +1,12 @@
 ﻿using System;
 using InvoiceCqrs.Domain.Entities;
+using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Visitors;
 using InvoiceCqrs.Visitors.Invoices;
 
 namespace InvoiceCqrs.Messages.Events.Invoices
 {
-    public class LineItemAdded : IEvent<LineItem>, IVisitable<IInvoiceEventVisitor>
+    public class LineItemAdded : IEvent<LineItem>, IVisitable<IInvoiceEventVisitor, EventHistoryItem>
     {
         public Guid Id { get; set; }
 
@@ -28,9 +29,9 @@ namespace InvoiceCqrs.Messages.Events.Invoices
             target.CreatedBy = new User {Id = CreatedById};
         }
 
-        public void Accept(IInvoiceEventVisitor visitor)
+        public EventHistoryItem Accept(IInvoiceEventVisitor visitor)
         {
-            visitor.Visit(this);
+            return visitor.Visit(this);
         }
     }
 }
