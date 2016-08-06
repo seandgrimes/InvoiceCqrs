@@ -150,6 +150,12 @@
     <Compile Include="Persistence\EventStore\Util\ObjectToPropertyDictionaryMapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registries\DatabaseRegistry.cs" />
+    <Compile Include="Registries\EventStoreRegistry.cs" />
+    <Compile Include="Registries\GeneratorRegistry.cs" />
+    <Compile Include="Registries\MediatorRegistry.cs" />
+    <Compile Include="Registries\ValidatorRegistry.cs" />
+    <Compile Include="Registries\VisitorRegistry.cs" />
     <Compile Include="Util\IGuidGenerator.cs" />
     <Compile Include="Util\SequentialGuidGenerator.cs" />
     <Compile Include="Validation\Commands\Invoices\CreateInvoiceCommandValidator.cs" />
