@@ -14,6 +14,9 @@
 // limitations under the License.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+using StructureMap;
+using StructureMap.Graph.Scanning;
+
 
 namespace InvoiceCqrs.Web.DependencyResolution {
     using System;
@@ -34,5 +37,13 @@ namespace InvoiceCqrs.Web.DependencyResolution {
         }
 
         #endregion
+
+        public void ScanTypes(TypeSet types, Registry registry)
+        {
+            foreach (var type in types.AllTypes())
+            {
+                Process(type, registry);
+            }
+        }
     }
 }

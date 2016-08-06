@@ -15,6 +15,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using InvoiceCqrs.Registries;
+using StructureMap;
+
 namespace InvoiceCqrs.Web.DependencyResolution {
     using StructureMap.Configuration.DSL;
     using StructureMap.Graph;
@@ -25,9 +28,13 @@ namespace InvoiceCqrs.Web.DependencyResolution {
         public DefaultRegistry() {
             Scan(
                 scan => {
-                    scan.TheCallingAssembly();
+                    scan.AssemblyContainingType<DefaultRegistry>();
                     scan.WithDefaultConventions();
 					scan.With(new ControllerConvention());
+                    scan.LookForRegistries();
+
+                    scan.AssemblyContainingType<DatabaseRegistry>();
+                    scan.LookForRegistries();
                 });
             //For<IExample>().Use<Example>();
         }
