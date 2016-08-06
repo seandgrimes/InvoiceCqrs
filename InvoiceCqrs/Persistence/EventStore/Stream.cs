@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using AutoMapper;
 using InvoiceCqrs.Messages.Commands.EventStore;
+using InvoiceCqrs.Messages.Events;
 using InvoiceCqrs.Persistence.EventStore.Util;
 using InvoiceCqrs.Util;
 using MediatR;
@@ -17,7 +18,7 @@ namespace InvoiceCqrs.Persistence.EventStore
         private readonly Guid _StreamId;
 
 
-        public IList<Event> Events { get; set; } = new List<Event>();
+        public IList<EventWrapper> Events { get; set; } = new List<EventWrapper>();
 
         public Stream(Guid streamId, IMediator mediator, IGuidGenerator guidGenerator)
         {
@@ -27,7 +28,7 @@ namespace InvoiceCqrs.Persistence.EventStore
 
             var mapperCfg = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Event, AddEvent>()
+                cfg.CreateMap<EventWrapper, AddEvent>()
                     .ForMember(dest => dest.CorrelationId, opt => opt.MapFrom(src => src.ExternalId))
                     .ForMember(dest => dest.Json, opt => opt.MapFrom(src => src.JsonContent));
             });
@@ -35,7 +36,7 @@ namespace InvoiceCqrs.Persistence.EventStore
             _Mapper = mapperCfg.CreateMapper();
         }
 
-        public TEvent Write<TEvent>(Expression<Action<EventBuilder<TEvent>>> buildExpr) where TEvent : INotification
+        public EventWrapper<TEvent> Write<TEvent>(Expression<Action<EventBuilder<TEvent>>> buildExpr) where TEvent : IEvent
         {
             var builder = new EventBuilder<TEvent>();
             var action = buildExpr.Compile();
@@ -52,10 +53,10 @@ namespace InvoiceCqrs.Persistence.EventStore
 
             _Mediator.Publish(builder.Event);
 
-            return builder.Event;
+            return evt;
         }
 
-        private void PersistEvent(Event evt)
+        private void PersistEvent(EventWrapper evt)
         {
             var eventEntity = _Mapper.Map<AddEvent>(evt);
             _Mediator.Send(eventEntity);

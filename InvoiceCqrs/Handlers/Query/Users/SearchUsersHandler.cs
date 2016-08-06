@@ -26,10 +26,10 @@ namespace InvoiceCqrs.Handlers.Query.Users
                 @"  SELECT u.Id, u.Email, u.FirstName, u.LastName
                     FROM Users.[User] u
                     WHERE 
-                        (@Email IS NULL OR u.Email = @Email) {CompOper}
-                        (@FirstName IS NULL OR u.FirstName = @FirstName) {CompOper}
-                        (@UserIdIsDefaultValue = 1 OR u.Id = @UserId) {CompOper}
-                        (@LastName IS NULL OR u.LastName = @LastName)";
+                        (@Email IS NOT NULL AND u.Email = @Email) {CompOper}
+                        (@FirstName IS NOT NULL AND u.FirstName = @FirstName) {CompOper}
+                        (@UserIdIsDefaultValue = 0 AND u.Id = @UserId) {CompOper}
+                        (@LastName IS NOT NULL AND u.LastName = @LastName)";
 
             var operators = new Dictionary<SearchOptions, string>
             {
@@ -37,7 +37,8 @@ namespace InvoiceCqrs.Handlers.Query.Users
                 {SearchOptions.MatchAll, "AND"}
             };
 
-            var results = _DbConnection.Query<User>(query.Replace("{CompOper}", operators[message.SearchOption]), new
+            var actualQuery = query.Replace("{CompOper}", operators[message.SearchOption]);
+            var results = _DbConnection.Query<User>(actualQuery, new
             {
                 message.Email,
                 message.FirstName,

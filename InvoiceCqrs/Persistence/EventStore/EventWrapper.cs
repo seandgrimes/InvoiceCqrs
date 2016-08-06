@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using InvoiceCqrs.Messages.Events;
 
 namespace InvoiceCqrs.Persistence.EventStore
 {
-    public class Event
+    public class EventWrapper
     {
         public DateTime EventDate { get; set; }
 
@@ -17,6 +18,13 @@ namespace InvoiceCqrs.Persistence.EventStore
 
         public IDictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
 
+        public Guid? SourceEventId { get; set; }
+
         public Guid StreamId { get; set; }
+    }
+
+    public class EventWrapper<TEvent> : EventWrapper where TEvent : IEvent
+    {
+        public TEvent Event { get; set; }
     }
 }

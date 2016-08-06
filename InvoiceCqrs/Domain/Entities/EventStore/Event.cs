@@ -17,6 +17,8 @@ namespace InvoiceCqrs.Domain.Entities.EventStore
 
         public IDictionary<string, string> Metadata { get; set; }
 
+        public Guid? SourceEventId { get; set; }
+
         public Guid StreamId { get; set; }
     }
 }

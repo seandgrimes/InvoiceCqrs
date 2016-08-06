@@ -40,8 +40,8 @@ namespace InvoiceCqrs.Handlers.Command.EventStore
             var entity = _Mapper.Map<Domain.Entities.EventStore.Event>(message);
 
             const string eventQuery =
-                @"  INSERT INTO EventStore.Event (Id, CorrelationId, EventDate, EventType, IsDispatched, Json, StreamId)
-                VALUES (@Id, @CorrelationId, @EventDate, @EventType, @IsDispatched, @Json, @StreamId)";
+                @"  INSERT INTO EventStore.Event (Id, CorrelationId, EventDate, EventType, IsDispatched, Json, SourceEventId, StreamId)
+                VALUES (@Id, @CorrelationId, @EventDate, @EventType, @IsDispatched, @Json, @SourceEventId, @StreamId)";
 
             _DbConnection.Execute(eventQuery, entity);
 

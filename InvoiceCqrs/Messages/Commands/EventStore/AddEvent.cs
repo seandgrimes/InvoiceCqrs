@@ -21,6 +21,8 @@ namespace InvoiceCqrs.Messages.Commands.EventStore
 
         public IDictionary<string, string> Metadata { get; set; }
 
+        public Guid? SourceEventId { get; set; }
+
         public Guid StreamId { get; set; } 
     }
 }

@@ -140,8 +140,7 @@
     <Compile Include="Messages\Queries\Users\GetUser.cs" />
     <Compile Include="Messages\Queries\Users\SearchUsers.cs" />
     <Compile Include="Messages\Shared\SearchOptions.cs" />
-    <Compile Include="Persistence\EventStore\Event.cs" />
-    <Compile Include="Persistence\EventStore\ISubscribe.cs" />
+    <Compile Include="Persistence\EventStore\EventWrapper.cs" />
     <Compile Include="Persistence\EventStore\Store.cs" />
     <Compile Include="Persistence\EventStore\Stream.cs" />
     <Compile Include="Persistence\EventStore\Streams.cs" />

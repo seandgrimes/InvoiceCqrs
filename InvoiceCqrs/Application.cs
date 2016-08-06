@@ -25,22 +25,24 @@ namespace InvoiceCqrs
 
         public void Run()
         {
+            var companyId = _GuidGenerator.Generate();
             var company = _Mediator.Send(new CreateCompany
             {
                 Addr1 = "123 Main Street",
                 Addr2 = string.Empty,
                 City = "Shreveport",
-                CompanyId = _GuidGenerator.Generate(),
-                Name = "Test Company",
+                CompanyId = companyId,
+                Name = $"Test Company {companyId}",
                 State = "LA",
                 ZipCode = "71101"
             });
 
+            var userId = _GuidGenerator.Generate();
             var user = _Mediator.Send(new CreateUser
             {
-                Email = "test.user@example.com",
+                Email = $"{userId}@example.com",
                 FirstName = "Test",
-                Id = _GuidGenerator.Generate(),
+                Id = userId,
                 LastName = "User"
             });
 

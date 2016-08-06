@@ -31,7 +31,7 @@ namespace InvoiceCqrs.Handlers.Command.Payments
         {
             var invoice = _Mediator.Send(new GetInvoiceForLineItem { LineItemId = message.LineItemId });
 
-            _Stream.Write<PaymentApplied>(builder => builder
+            var applied = _Stream.Write<PaymentApplied>(builder => builder
                 .WithCorrelationId(message.PaymentId)
                 .WithEvent(_Mapper.Map<PaymentApplied>(message))
                 .WithMetaData(evt => new
@@ -43,6 +43,7 @@ namespace InvoiceCqrs.Handlers.Command.Payments
             _Stream.Write<LineItemPaid>(builder => builder
                 .WithCorrelationId(message.LineItemId)
                 .WithEvent(_Mapper.Map<LineItemPaid>(message))
+                .WithSourceEventId(applied.EventId)
                 .WithMetaData(evt => new
                 {
                     InvoiceId = invoice.Id
@@ -50,6 +51,7 @@ namespace InvoiceCqrs.Handlers.Command.Payments
 
             _Stream.Write<InvoiceBalanceUpdated>(builder => builder
                 .WithCorrelationId(invoice.Id)
+                .WithSourceEventId(applied.EventId)
                 .WithEvent(new InvoiceBalanceUpdated
                 {
                     Amount = -1*message.Amount,
@@ -61,6 +63,7 @@ namespace InvoiceCqrs.Handlers.Command.Payments
 
             _Stream.Write<PaymentBalanceUpdated>(builder => builder
                 .WithCorrelationId(message.PaymentId)
+                .WithSourceEventId(applied.EventId)
                 .WithEvent(new PaymentBalanceUpdated
                 {
                     Amount = -1*message.Amount,
