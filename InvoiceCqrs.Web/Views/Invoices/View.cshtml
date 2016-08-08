@@ -1,0 +1,44 @@
+﻿@model InvoiceCqrs.Web.Models.InvoiceViewModel
+@{
+    ViewBag.Title = "View Invoice";
+}
+
+<h2>View Invoice</h2>
+
+<section>
+    <div>
+        <label>Invoice Number:</label>
+        <span>@Model.InvoiceNumber</span>
+    </div>
+    <div>
+        <label>Company:</label>
+        <span>@Model.CompanyName</span>
+    </div>
+    <div>
+        <label>Created By:</label>
+        <span>@Model.CreatedBy.FullName</span>
+    </div>
+</section>
+
+<section>
+    <h3>Line Items</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Created By</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var lineItem in Model.LineItems)
+        {
+            <tr>
+                <td>@lineItem.Amount</td>
+                <td>@lineItem.Description</td>
+                <td>@lineItem.CreatedBy.FullName</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</section>

@@ -21,14 +21,29 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
 
         public IList<Invoice> Handle(GetInvoices message)
         {
-            const string query = @"
-                SELECT i.Id, i.Balance, i.CreatedById, i.InvoiceNumber, i.CompanyId, i.CreatedOn
+            const string queryTemplate = @"
+                SELECT 
+                    i.*,
+                    u.*,
+                    c.*
                 FROM Accounting.Invoice i
+                JOIN Users.[User] u ON i.CreatedById = u.Id
+                JOIN Companies.Company c ON i.CompanyId = c.Id
                 WHERE
-                    (@IsCompanyIdDefault = 1 OR i.CompanyID = @CompanyID) {CompOper}
-                    (@InvoiceNumber IS NULL OR i.InvoiceNumber = @InvoiceNumber)";
+                    (@IsCompanyIdDefault = 1 AND @InvoiceNumber IS NULL) OR
+                    ((@IsCompanyIdDefault = 0 AND i.CompanyID = @CompanyID) {CompOper}
+                    (@InvoiceNumber IS NOT NULL AND i.InvoiceNumber = @InvoiceNumber))";
 
-            return _DbConnection.Query<Invoice>(query.Replace("{CompOper}", message.SearchOption.ToSqlOperator()), new
+            var query = queryTemplate.Replace("{CompOper}", message.SearchOption.ToSqlOperator());
+            Func<Invoice, User, Company, Invoice> mapper = (invoice, user, company) =>
+            {
+                invoice.CreatedBy = user;
+                invoice.Company = company;
+
+                return invoice;
+            };
+
+            return _DbConnection.Query(query, mapper, new
             {
                 IsCompanyIdDefault = message.CompanyId == default(Guid) ? 1 : 0,
                 message.CompanyId,

@@ -31,10 +31,6 @@ namespace InvoiceCqrs.Web.DependencyResolution {
                     scan.AssemblyContainingType<DefaultRegistry>();
                     scan.WithDefaultConventions();
 					scan.With(new ControllerConvention());
-                    scan.LookForRegistries();
-
-                    scan.AssemblyContainingType<DatabaseRegistry>();
-                    scan.LookForRegistries();
                 });
             //For<IExample>().Use<Example>();
         }

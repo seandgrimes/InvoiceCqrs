@@ -1,10 +1,10 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Linq;
 using Dapper;
 using InvoiceCqrs.Domain.Entities;
-using InvoiceCqrs.Messages.Queries;
+using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Messages.Queries.Invoices;
-using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Invoices
@@ -12,7 +12,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
     public class GetInvoiceHandler : IRequestHandler<GetInvoice, Invoice>
     {
         private readonly IDbConnection _DbConnection;
-
+        
         public GetInvoiceHandler(IDbConnection dbConnection)
         {
             _DbConnection = dbConnection;
@@ -21,37 +21,57 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
         public Invoice Handle(GetInvoice message)
         {
             // Need to find a much better way to do this... Do we even need fully hydrated objects?
-            const string query = @"
-                SELECT i.Id, i.Balance, i.CreatedById, i.InvoiceNumber, i.CompanyId, i.CreatedOn
+            const string invoiceQuery = @"
+                SELECT 
+                    i.*,
+                    u.*,
+                    c.Id, c.Name,
+                    c.Id, c.Addr1, c.Addr2, c.City, c.State, c.ZipCode
                 FROM Accounting.Invoice i
-                WHERE i.Id = @Id;
-
-                SELECT u.Id, u.Email, u.FirstName, u.LastName, u.CreatedOn
-                FROM Users.[User] u
-                JOIN Accounting.Invoice i ON u.Id = i.CreatedById
-                WHERE i.Id = @Id;
-
-                SELECT c.Id, c.Name
-                FROM Companies.Company c
-                JOIN Accounting.Invoice i ON c.Id = i.CompanyId
-                WHERE i.Id = @Id;
-
-                SELECT c.Addr1, c.Addr2, c.City, c.State, c.ZipCode
-                FROM Companies.Company c
-                JOIN Accounting.Invoice i ON c.Id = i.CompanyId
+                JOIN Users.[User] u ON i.CreatedById = u.Id
+                JOIN Companies.Company c ON i.CompanyId = c.Id
                 WHERE i.Id = @Id;";
 
-            using (var multi = _DbConnection.QueryMultiple(query, message))
+            Func<Invoice, User, Company, Address, Invoice> invoiceMapper = (inv, user, company, address) =>
             {
-                var invoice = multi.Read<Invoice>().SingleOrDefault();
-                if (invoice != null)
-                {
-                    invoice.CreatedBy = multi.Read<User>().SingleOrDefault();
-                    invoice.Company = multi.Read<Company>().SingleOrDefault();
-                }
+                company.Address = address;
+                inv.Company = company;
+                inv.CreatedBy = user;
 
-                return invoice;
+                return inv;
+            };
+
+            var invoice = _DbConnection.Query(invoiceQuery, invoiceMapper, message).SingleOrDefault();
+            if (invoice == null)
+            {
+                return null;
             }
+
+            const string lineItemQuery = @"
+                SELECT 
+                    li.*,
+                    u.*,
+                    i.*,
+                    iu.*
+                FROM Accounting.LineItem li
+                JOIN Users.[User] u ON li.CreatedById = u.Id
+                JOIN Accounting.Invoice i ON li.InvoiceId = i.Id
+                JOIN Users.[User] iu ON i.CreatedById = iu.Id
+                WHERE li.InvoiceId = @Id;";
+
+            Func<LineItem, User, Invoice, User, LineItem> lineItemMapper = (lineItem, lineItemUser, inv, invoiceUser) =>
+            {
+                lineItem.CreatedBy = lineItemUser;
+                lineItem.Invoice = inv;
+                lineItem.Invoice.CreatedBy = invoiceUser;
+
+                return lineItem;
+            };
+
+            invoice.LineItems = _DbConnection.Query(lineItemQuery, lineItemMapper, message)
+                .ToList();
+
+            return invoice;
         }
     }
 }

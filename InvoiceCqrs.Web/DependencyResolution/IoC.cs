@@ -16,12 +16,23 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 
+using InvoiceCqrs.Registries;
+
 namespace InvoiceCqrs.Web.DependencyResolution {
     using StructureMap;
 	
     public static class IoC {
         public static IContainer Initialize() {
-            return new Container(c => c.AddRegistry<DefaultRegistry>());
+            return new Container(c =>
+            {
+                c.AddRegistry<DefaultRegistry>();
+                c.AddRegistry<DatabaseRegistry>();
+                c.AddRegistry<EventStoreRegistry>();
+                c.AddRegistry<GeneratorRegistry>();
+                c.AddRegistry<MediatorRegistry>();
+                c.AddRegistry<ValidatorRegistry>();
+                c.AddRegistry<VisitorRegistry>();
+            });
         }
     }
 }
