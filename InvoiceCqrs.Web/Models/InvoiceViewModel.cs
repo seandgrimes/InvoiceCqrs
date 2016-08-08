@@ -13,6 +13,8 @@ namespace InvoiceCqrs.Web.Models
 
         public UserViewModel CreatedBy { get; set; }
 
+        public IList<EventHistoryItemViewModel> History { get; set; } = new List<EventHistoryItemViewModel>();
+
         public Guid Id { get; set; }
 
         public string InvoiceNumber { get; set; }

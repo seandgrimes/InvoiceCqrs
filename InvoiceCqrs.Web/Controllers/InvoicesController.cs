@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using AutoMapper;
 using InvoiceCqrs.Domain.Entities;
+using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Web.Models;
 using MediatR;
@@ -24,6 +25,7 @@ namespace InvoiceCqrs.Web.Controllers
                     .ForMember(dest => dest.Balance, opt => opt.MapFrom(src => $"{src.Balance:C}"));
                 cfg.CreateMap<LineItem, LineItemViewModel>()
                     .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => $"{src.Amount:C}"));
+                cfg.CreateMap<EventHistoryItem, EventHistoryItemViewModel>();
             }).CreateMapper();
         }
 
@@ -40,6 +42,9 @@ namespace InvoiceCqrs.Web.Controllers
         {
             var invoice = _Mediator.Send(new GetInvoice {Id = id});
             var viewModel = _Mapper.Map<InvoiceViewModel>(invoice);
+
+            var history = _Mediator.Send(new GetInvoiceHistory {InvoiceId = id});
+            viewModel.History = _Mapper.Map<IList<EventHistoryItemViewModel>>(history);
 
             return View(viewModel);
         }

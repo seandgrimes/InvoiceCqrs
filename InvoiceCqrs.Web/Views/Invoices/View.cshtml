@@ -42,3 +42,24 @@
         </tbody>
     </table>
 </section>
+
+<section>
+    <h3>History</h3>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>History</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var historyItem in Model.History)
+        {
+            <tr>
+                <td>@historyItem.EventDate</td>
+                <td>@historyItem.Message</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</section>
