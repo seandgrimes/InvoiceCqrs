@@ -97,6 +97,7 @@
     <Compile Include="Handlers\Event\UpdateInvoiceReadModelEventHandlers.cs" />
     <Compile Include="Handlers\Event\UpdatePaymentReadModelEventHandlers.cs" />
     <Compile Include="Handlers\Event\UpdateUserReadModelEventHandlers.cs" />
+    <Compile Include="Handlers\Query\Companies\GetCompaniesHandler.cs" />
     <Compile Include="Handlers\Query\Companies\GetCompanyHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceForLineItemHandler.cs" />
     <Compile Include="Handlers\Query\Invoices\GetInvoiceHandler.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Messages\Events\Payments\PaymentUnapplied.cs" />
     <Compile Include="Messages\Events\Reports\ReportPrinted.cs" />
     <Compile Include="Messages\Events\Users\UserCreated.cs" />
+    <Compile Include="Messages\Queries\Companies\GetCompanies.cs" />
     <Compile Include="Messages\Queries\Companies\GetCompany.cs" />
     <Compile Include="Messages\Queries\Invoices\GetInvoice.cs" />
     <Compile Include="Messages\Queries\Invoices\GetInvoiceForLineItem.cs" />

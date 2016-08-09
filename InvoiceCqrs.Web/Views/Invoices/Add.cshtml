@@ -1,0 +1,56 @@
+﻿@model string
+
+@{
+    ViewBag.Title = "Add Invoice";
+}
+
+<h2>Add Invoice</h2>
+
+<form method="post">
+    <section>
+        <h3>General Information</h3>
+
+        <!-- TODO: Use flexbox to make everything line up here -->
+        <div>
+            <label for="invoiceNumber">Invoice Number:</label>
+            <input type="text" id="invoiceNumber" data-bind="value: invoiceNumber"/>
+        </div>
+        <div>
+            <label for="companies">Company</label>
+            <select id="companies" data-bind="options: companies,
+                                              optionsText: 'text',
+                                              optionsValue: 'value',
+                                              optionsCaption: 'Choose one...',
+                                              value: companyId"></select>
+        </div>
+    </section>
+
+    <section>
+        <h3>Line Items</h3>
+
+        <!-- TODO: Use flexbox instead of a table -->
+        <table data-bind="foreach: lineItems">
+            <tr>
+                <td>
+                    <label>Amount:</label>
+                    <input type="number" data-bind="value: amount"/>
+                </td>
+                <td>
+                    <label>Description:</label>
+                    <input type="text" data-bind="value: description"/>
+                </td>
+            </tr>
+        </table>
+
+        <a href="#" id="addLineItem" data-bind="click: addLineItem">Add Line Item</a>
+    </section>
+
+    <input type="button" data-bind="click: submit" value="Submit"/>
+</form>
+
+@Scripts.Render("~/bundles/invoices/addedit")
+
+<script type="text/javascript">
+    const viewModel = new AddEditInvoiceViewModel(@Html.Raw(Model));
+    ko.applyBindings(viewModel);
+</script>

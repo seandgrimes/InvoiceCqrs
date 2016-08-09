@@ -10,9 +10,11 @@ namespace InvoiceCqrs.Persistence.EventStore.Util
     {
         public IList<IEvent> Hydrate(IList<Domain.Entities.EventStore.Event> events)
         {
-            return events
+            var hydrated = events
                 .Select(evt => (IEvent) JsonConvert.DeserializeObject(evt.Json, Type.GetType(evt.EventType)))
                 .ToList();
+
+            return hydrated;
         }
     }
 }

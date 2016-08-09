@@ -7,11 +7,11 @@
 
 <table class="table table-striped">
     <thead>
-        <tr>
-            <th>Invoice Number</th>
-            <th>Balance</th>
-            <th>Created By</th>
-        </tr>
+    <tr>
+        <th>Invoice Number</th>
+        <th>Balance</th>
+        <th>Created By</th>
+    </tr>
     </thead>
     <tbody>
     @foreach (var invoice in Model)
@@ -27,3 +27,4 @@
     </tbody>
 </table>
 
+@Html.ActionLink("Add Invoice", "Add")
