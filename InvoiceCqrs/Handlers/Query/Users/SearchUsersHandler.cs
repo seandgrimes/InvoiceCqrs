@@ -6,17 +6,18 @@ using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Queries.Users;
 using InvoiceCqrs.Messages.Shared;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Users
 {
     public class SearchUsersHandler : IRequestHandler<SearchUsers, IList<User>>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
 
-        public SearchUsersHandler(IDbConnection dbConnection)
+        public SearchUsersHandler(IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public IList<User> Handle(SearchUsers message)
@@ -38,7 +39,7 @@ namespace InvoiceCqrs.Handlers.Query.Users
             };
 
             var actualQuery = query.Replace("{CompOper}", operators[message.SearchOption]);
-            var results = _DbConnection.Query<User>(actualQuery, new
+            var results = _UnitOfWork.Query<User>(actualQuery, new
             {
                 message.Email,
                 message.FirstName,

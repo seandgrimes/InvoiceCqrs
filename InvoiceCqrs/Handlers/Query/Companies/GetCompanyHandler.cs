@@ -4,17 +4,18 @@ using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Messages.Queries.Companies;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Companies
 {
     public class GetCompanyHandler : IRequestHandler<GetCompany, Company>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
 
-        public GetCompanyHandler(IDbConnection dbConnection)
+        public GetCompanyHandler(IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public Company Handle(GetCompany message)
@@ -31,7 +32,7 @@ namespace InvoiceCqrs.Handlers.Query.Companies
 
             Company company;
 
-            using (var multi = _DbConnection.QueryMultiple(query, message))
+            using (var multi = _UnitOfWork.QueryMultiple(query, message))
             {
                 company = multi.Read<Company>().SingleOrDefault();
                 if (company != null)

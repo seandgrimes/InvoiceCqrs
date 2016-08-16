@@ -1,19 +1,18 @@
-﻿using System.Data;
-using System.Linq;
-using Dapper;
+﻿using System.Linq;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Queries.Reports;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Reports
 {
     public class GetReportHandler : IRequestHandler<GetReport, Report>
     {
-        private readonly IDbConnection _DbConnection;
-
-        public GetReportHandler(IDbConnection dbConnection)
+        private readonly IUnitOfWork _UnitOfWork;
+        
+        public GetReportHandler(IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public Report Handle(GetReport message)
@@ -23,7 +22,7 @@ namespace InvoiceCqrs.Handlers.Query.Reports
                     FROM Reports.Report r
                     WHERE r.Id = @ReportId";
 
-            return _DbConnection.Query<Report>(query, message).SingleOrDefault();
+            return _UnitOfWork.Query<Report>(query, message).SingleOrDefault();
         }
     }
 }

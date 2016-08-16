@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Queries.Companies;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Companies
 {
     public class GetCompaniesHandler : IRequestHandler<GetCompanies, IList<Company>>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
 
-        public GetCompaniesHandler(IDbConnection dbConnection)
+        public GetCompaniesHandler(IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public IList<Company> Handle(GetCompanies message)
@@ -24,7 +23,7 @@ namespace InvoiceCqrs.Handlers.Query.Companies
                     FROM Companies.Company c
                     ORDER BY c.Name ASC";
 
-            return _DbConnection.Query<Company>(query)
+            return _UnitOfWork.Query<Company>(query)
                 .ToList();
         }
     }

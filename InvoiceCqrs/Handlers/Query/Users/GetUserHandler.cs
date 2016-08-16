@@ -3,17 +3,18 @@ using System.Linq;
 using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Queries.Users;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Users
 {
     public class GetUserHandler : IRequestHandler<GetUser, User>
     {
-        private readonly IDbConnection _DbConnection;
-
-        public GetUserHandler(IDbConnection dbConnection)
+        private readonly IUnitOfWork _UnitOfWork;
+        
+        public GetUserHandler(IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public User Handle(GetUser message)
@@ -22,7 +23,7 @@ namespace InvoiceCqrs.Handlers.Query.Users
                 "SELECT Id, FirstName, LastName, Email FROM Users.[User] u " +
                 "WHERE u.Id = @UserId";
 
-            var users = _DbConnection.Query<User>(query, message);
+            var users = _UnitOfWork.Query<User>(query, message);
 
             return users.FirstOrDefault();
         }

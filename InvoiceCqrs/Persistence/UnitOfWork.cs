@@ -42,6 +42,11 @@ namespace InvoiceCqrs.Persistence
             return Connection.Query<TResult>(query, @params, _DbTransaction);
         }
 
+        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TReturn>(string query, Func<TFirst, TSecond, TThird, TReturn> map, object param = null)
+        {
+            return Connection.Query(query, map, param, _DbTransaction);
+        }
+
         public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TReturn>(string query, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, object param = null)
         {
             return Connection.Query(query, map, param, _DbTransaction);

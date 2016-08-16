@@ -14,7 +14,6 @@ namespace InvoiceCqrs.Handlers.Command.EventStore
     public class AddEventHandler : IRequestHandler<AddEvent, Domain.Entities.EventStore.Event>
     {
         private readonly IUnitOfWork _UnitOfWork;
-        private readonly IDbConnection _DbConnection;
         private readonly IMapper _Mapper;
 
         public AddEventHandler(IUnitOfWork unitOfWork, IGuidGenerator guidGenerator)

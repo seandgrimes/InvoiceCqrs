@@ -4,18 +4,19 @@ using System.Linq;
 using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Queries.Invoices;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Invoices
 {
     public class GetInvoiceForLineItemHandler : IRequestHandler<GetInvoiceForLineItem, Invoice>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IMediator _Mediator;
 
-        public GetInvoiceForLineItemHandler(IDbConnection dbConnection, IMediator mediator)
+        public GetInvoiceForLineItemHandler(IUnitOfWork unitOfWork, IMediator mediator)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
             _Mediator = mediator;
         }
 
@@ -26,7 +27,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
                 FROM Accounting.LineItem li
                 WHERE li.Id = @LineItemId;";
 
-            var invoiceId = _DbConnection.Query<Guid?>(query, message).SingleOrDefault();
+            var invoiceId = _UnitOfWork.Query<Guid?>(query, message).SingleOrDefault();
             if (!invoiceId.HasValue)
             {
                 return null;

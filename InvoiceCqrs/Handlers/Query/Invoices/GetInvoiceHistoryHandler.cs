@@ -4,6 +4,7 @@ using System.Linq;
 using Dapper;
 using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Messages.Queries.Invoices;
+using InvoiceCqrs.Persistence;
 using InvoiceCqrs.Persistence.EventStore.Util;
 using InvoiceCqrs.Visitors;
 using InvoiceCqrs.Visitors.Invoices;
@@ -14,13 +15,13 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
     public class GetInvoiceHistoryHandler : IRequestHandler<GetInvoiceHistory, IList<EventHistoryItem>>
     {
         private readonly IInvoiceEventVisitor _InvoiceVisitor;
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IEventHydrator _EventHydrator;
         
-        public GetInvoiceHistoryHandler(IInvoiceEventVisitor invoiceVisitor, IDbConnection dbConnection, IEventHydrator eventHydrator)
+        public GetInvoiceHistoryHandler(IInvoiceEventVisitor invoiceVisitor, IUnitOfWork unitOfWork, IEventHydrator eventHydrator)
         {
             _InvoiceVisitor = invoiceVisitor;
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
             _EventHydrator = eventHydrator;
         }
 
@@ -34,7 +35,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
                         OR (emd.Name = 'InvoiceId' AND emd.Value = @InvoiceId)
                     ORDER BY e.EventDate;";
 
-            var events = _DbConnection.Query<Domain.Entities.EventStore.Event>(eventsQuery, message).ToList();
+            var events = _UnitOfWork.Query<Domain.Entities.EventStore.Event>(eventsQuery, message).ToList();
 
             var visitable = _EventHydrator.Hydrate(events)
                 .Select(evt => evt as IVisitable<IInvoiceEventVisitor, EventHistoryItem>)

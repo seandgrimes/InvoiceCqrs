@@ -4,18 +4,19 @@ using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Queries.Payments;
 using InvoiceCqrs.Messages.Queries.Users;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Payments
 {
     public class GetPaymentHandler : IRequestHandler<GetPayment, Payment>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IMediator _Mediator;
 
-        public GetPaymentHandler(IDbConnection dbConnection, IMediator mediator)
+        public GetPaymentHandler(IUnitOfWork unitOfWork, IMediator mediator)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
             _Mediator = mediator;
         }
 
@@ -26,7 +27,7 @@ namespace InvoiceCqrs.Handlers.Query.Payments
                 "FROM Accounting.Payment p " +
                 "WHERE p.Id = @Id ";
 
-            var payment = _DbConnection.Query<Payment>(query, message).SingleOrDefault();
+            var payment = _UnitOfWork.Query<Payment>(query, message).SingleOrDefault();
             if (payment == null)
             {
                 return null;

@@ -6,17 +6,18 @@ using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Extensions;
 using InvoiceCqrs.Messages.Queries.Invoices;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Invoices
 {
     public class GetInvoicesHandler : IRequestHandler<GetInvoices, IList<Invoice>>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
 
-        public GetInvoicesHandler(IDbConnection dbConnection)
+        public GetInvoicesHandler(IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public IList<Invoice> Handle(GetInvoices message)
@@ -43,7 +44,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
                 return invoice;
             };
 
-            return _DbConnection.Query(query, mapper, new
+            return _UnitOfWork.Query(query, mapper, new
             {
                 IsCompanyIdDefault = message.CompanyId == default(Guid) ? 1 : 0,
                 message.CompanyId,

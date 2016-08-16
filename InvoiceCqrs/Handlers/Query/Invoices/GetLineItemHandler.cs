@@ -13,7 +13,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
     {
         private readonly IUnitOfWork _UnitOfWork;
 
-        public GetLineItemHandler(IDbConnection dbConnection, IUnitOfWork unitOfWork)
+        public GetLineItemHandler(IUnitOfWork unitOfWork)
         {
             _UnitOfWork = unitOfWork;
         }
