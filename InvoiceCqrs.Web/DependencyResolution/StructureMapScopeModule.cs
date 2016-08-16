@@ -1,9 +1,9 @@
+using StructureMap.Web.Pipeline;
+
 namespace InvoiceCqrs.Web.DependencyResolution {
     using System.Web;
 
     using InvoiceCqrs.Web.App_Start;
-
-    using StructureMap.Web.Pipeline;
 
     public class StructureMapScopeModule : IHttpModule {
         #region Public Methods and Operators

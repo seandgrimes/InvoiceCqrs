@@ -15,6 +15,8 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
+using StructureMap;
+
 namespace InvoiceCqrs.Web.DependencyResolution {
     using System;
     using System.Collections.Generic;

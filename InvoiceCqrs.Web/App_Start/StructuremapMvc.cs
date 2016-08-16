@@ -16,7 +16,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 using InvoiceCqrs.Web.App_Start;
-
+using StructureMap;
 using WebActivatorEx;
 
 [assembly: PreApplicationStartMethod(typeof(StructuremapMvc), "Start")]
@@ -45,7 +45,7 @@ namespace InvoiceCqrs.Web.App_Start {
         }
 		
         public static void Start() {
-            IContainer container = IoC.Initialize();
+            IContainer container = IoC.Current;
             StructureMapDependencyScope = new StructureMapDependencyScope(container);
             DependencyResolver.SetResolver(StructureMapDependencyScope);
             DynamicModuleUtility.RegisterModule(typeof(StructureMapScopeModule));

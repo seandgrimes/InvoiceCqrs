@@ -17,16 +17,22 @@
 
 
 using InvoiceCqrs.Registries;
+using StructureMap;
 
 namespace InvoiceCqrs.Web.DependencyResolution {
     using StructureMap;
 	
-    public static class IoC {
-        public static IContainer Initialize() {
+    public static class IoC
+    {
+        private static IContainer _Container;
+
+        public static IContainer Current => _Container ?? (_Container = Initialize());
+
+        private static IContainer Initialize() {
             return new Container(c =>
             {
                 c.AddRegistry<DefaultRegistry>();
-                c.AddRegistry<DatabaseRegistry>();
+                c.AddRegistry<StructureMap.Registries.DatabaseRegistry>();
                 c.AddRegistry<EventStoreRegistry>();
                 c.AddRegistry<GeneratorRegistry>();
                 c.AddRegistry<MediatorRegistry>();

@@ -9,6 +9,7 @@ using InvoiceCqrs.Messages.Commands.Invoices;
 using InvoiceCqrs.Messages.Queries.Companies;
 using InvoiceCqrs.Messages.Queries.Invoices;
 using InvoiceCqrs.Util;
+using InvoiceCqrs.Web.Actions;
 using InvoiceCqrs.Web.Models;
 using MediatR;
 using Newtonsoft.Json;
@@ -37,6 +38,7 @@ namespace InvoiceCqrs.Web.Controllers
             }).CreateMapper();
         }
 
+        [UnitOfWork]
         public ActionResult Add()
         {
             var viewModel = new AddEditInvoiceViewModel();
@@ -53,6 +55,7 @@ namespace InvoiceCqrs.Web.Controllers
         }
 
         [HttpPost]
+        [UnitOfWork]
         public ActionResult Add(AddEditInvoiceViewModel viewModel)
         {
             // This is bad, we probably need to implement some type of
@@ -79,12 +82,15 @@ namespace InvoiceCqrs.Web.Controllers
                     Id = _GuidGenerator.Generate(),
                     InvoiceId = invoice.Id
                 });
+
+                throw new Exception("Testing rollback");
             }
 
             return Json(_Mapper.Map<InvoiceViewModel>(invoice));
         }
 
         // GET: Invoices
+        [UnitOfWork]
         public ActionResult Index()
         {
             var invoices = _Mediator.Send(new GetInvoices());
@@ -93,6 +99,7 @@ namespace InvoiceCqrs.Web.Controllers
             return View(viewModel);
         }
 
+        [UnitOfWork]
         public ActionResult View(Guid id)
         {
             var invoice = _Mediator.Send(new GetInvoice {Id = id});

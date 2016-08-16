@@ -1,17 +1,16 @@
-﻿using System.Data;
-using Dapper;
-using InvoiceCqrs.Messages.Events.Users;
+﻿using InvoiceCqrs.Messages.Events.Users;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Event
 {
     public class UpdateUserReadModelEventHandlers : INotificationHandler<UserCreated>
     {
-        private readonly IDbConnection _DbConnection;
-
-        public UpdateUserReadModelEventHandlers(IDbConnection dbConnection)
+        private readonly IUnitOfWork _UnitOfWork;
+        
+        public UpdateUserReadModelEventHandlers(IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public void Handle(UserCreated notification)
@@ -20,7 +19,7 @@ namespace InvoiceCqrs.Handlers.Event
                 "INSERT INTO Users.[User] (Id, Email, FirstName, LastName, CreatedOn) " +
                 "VALUES (@UserId, @Email, @FirstName, @LastName, @EventDate)";
 
-            _DbConnection.Execute(query, notification);
+            _UnitOfWork.Execute(query, notification);
         }
     }
 }

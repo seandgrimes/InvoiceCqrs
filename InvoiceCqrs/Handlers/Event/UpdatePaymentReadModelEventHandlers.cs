@@ -4,18 +4,19 @@ using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Events.Payments;
 using InvoiceCqrs.Messages.Queries.Payments;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Event
 {
     public class UpdatePaymentReadModelEventHandlers : INotificationHandler<PaymentReceived>, INotificationHandler<PaymentBalanceUpdated>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IMediator _Mediator;
 
-        public UpdatePaymentReadModelEventHandlers(IDbConnection dbConnection, IMediator mediator)
+        public UpdatePaymentReadModelEventHandlers(IUnitOfWork unitOfWork, IMediator mediator)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
             _Mediator = mediator;
         }
 
@@ -28,7 +29,7 @@ namespace InvoiceCqrs.Handlers.Event
                 "INSERT INTO Accounting.Payment (Id, ReceivedOn, ReceivedById, Amount, Balance)" +
                 "VALUES (@Id, @ReceivedOn, @ReceivedById, @Amount, @Balance)";
 
-            _DbConnection.Execute(query, new
+            _UnitOfWork.Execute(query, new
             {
                 payment.Id,
                 payment.ReceivedOn,
@@ -52,7 +53,7 @@ namespace InvoiceCqrs.Handlers.Event
                     SET Balance = @Balance
                     WHERE Id = @Id";
 
-            _DbConnection.Execute(query, payment);
+            _UnitOfWork.Execute(query, payment);
         }
     }
 }

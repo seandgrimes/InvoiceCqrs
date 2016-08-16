@@ -5,6 +5,7 @@ using AutoMapper;
 using Dapper;
 using InvoiceCqrs.Domain.Entities.EventStore;
 using InvoiceCqrs.Messages.Commands.EventStore;
+using InvoiceCqrs.Persistence;
 using InvoiceCqrs.Util;
 using MediatR;
 
@@ -12,12 +13,13 @@ namespace InvoiceCqrs.Handlers.Command.EventStore
 {
     public class AddEventHandler : IRequestHandler<AddEvent, Domain.Entities.EventStore.Event>
     {
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IDbConnection _DbConnection;
         private readonly IMapper _Mapper;
 
-        public AddEventHandler(IDbConnection dbConnection, IGuidGenerator guidGenerator)
+        public AddEventHandler(IUnitOfWork unitOfWork, IGuidGenerator guidGenerator)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
             
             _Mapper = new MapperConfiguration(cfg =>
             {
@@ -43,7 +45,7 @@ namespace InvoiceCqrs.Handlers.Command.EventStore
                 @"  INSERT INTO EventStore.Event (Id, CorrelationId, EventDate, EventType, IsDispatched, Json, SourceEventId, StreamId)
                 VALUES (@Id, @CorrelationId, @EventDate, @EventType, @IsDispatched, @Json, @SourceEventId, @StreamId)";
 
-            _DbConnection.Execute(eventQuery, entity);
+            _UnitOfWork.Execute(eventQuery, entity);
 
             const string metadataQuery =
                 @"  INSERT INTO EventStore.EventMetadata (Id, EventId, Name, Value)
@@ -58,7 +60,7 @@ namespace InvoiceCqrs.Handlers.Command.EventStore
                     meta.Value
                 });
 
-            _DbConnection.Execute(metadataQuery, metadata);
+            _UnitOfWork.Execute(metadataQuery, metadata);
 
             return entity;
         }

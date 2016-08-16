@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
-using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Messages.Queries.Invoices;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Invoices
 {
     public class GetInvoiceHandler : IRequestHandler<GetInvoice, Invoice>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
         
-        public GetInvoiceHandler(IDbConnection dbConnection)
+        public GetInvoiceHandler(IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public Invoice Handle(GetInvoice message)
@@ -41,7 +40,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
                 return inv;
             };
 
-            var invoice = _DbConnection.Query(invoiceQuery, invoiceMapper, message).SingleOrDefault();
+            var invoice = _UnitOfWork.Query(invoiceQuery, invoiceMapper, message).SingleOrDefault();
             if (invoice == null)
             {
                 return null;
@@ -68,7 +67,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
                 return lineItem;
             };
 
-            invoice.LineItems = _DbConnection.Query(lineItemQuery, lineItemMapper, message)
+            invoice.LineItems = _UnitOfWork.Query(lineItemQuery, lineItemMapper, message)
                 .ToList();
 
             return invoice;

@@ -1,10 +1,9 @@
-﻿using System.Data;
-using AutoMapper;
-using Dapper;
+﻿using AutoMapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Messages.Events.Invoices;
 using InvoiceCqrs.Messages.Events.Reports;
 using InvoiceCqrs.Messages.Queries.Invoices;
+using InvoiceCqrs.Persistence;
 using InvoiceCqrs.Persistence.EventStore;
 using InvoiceCqrs.Util;
 using MediatR;
@@ -16,14 +15,14 @@ namespace InvoiceCqrs.Handlers.Event
     {
         private readonly IMapper _Mapper;
         private readonly IMediator _Mediator;
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IGuidGenerator _GuidGenerator;
         private readonly Stream _InvoiceStream;
 
-        public UpdateInvoiceReadModelEventHandlers(IMediator mediator, Store store, IDbConnection dbConnection, IGuidGenerator guidGenerator)
+        public UpdateInvoiceReadModelEventHandlers(IMediator mediator, Store store, IUnitOfWork unitOfWork, IGuidGenerator guidGenerator)
         {
             _Mediator = mediator;
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
             _GuidGenerator = guidGenerator;
             _InvoiceStream = store.Open(Streams.Invoices);
 
@@ -43,7 +42,7 @@ namespace InvoiceCqrs.Handlers.Event
                 "INSERT INTO Accounting.Invoice (Id, Balance, CreatedById, InvoiceNumber, CompanyId, CreatedOn) " +
                 "VALUES (@Id, @Balance, @CreatedById, @InvoiceNumber, @CompanyId, @CreatedOn)";
 
-            _DbConnection.Execute(query, new
+            _UnitOfWork.Execute(query, new
             {
                 invoice.Id,
                 invoice.Balance,
@@ -63,7 +62,7 @@ namespace InvoiceCqrs.Handlers.Event
                 INSERT INTO Accounting.LineItem (Id, InvoiceId, Description, Amount, IsPaid, CreatedOn, CreatedById)
                 VALUES (@Id, @InvoiceId, @Description, @Amount, @IsPaid, @CreatedOn, @CreatedById)";
 
-            _DbConnection.Execute(query, new
+            _UnitOfWork.Execute(query, new
             {
                 lineItem.Id,
                 lineItem.InvoiceId,
@@ -86,7 +85,7 @@ namespace InvoiceCqrs.Handlers.Event
                 SET Balance = @Balance
                 WHERE Id = @Id";
 
-            _DbConnection.Execute(query, invoice);
+            _UnitOfWork.Execute(query, invoice);
 
             // This assumes a liability account, I'm considering invoices to 
             // be liabilities for the company that receives an invoice
@@ -105,7 +104,7 @@ namespace InvoiceCqrs.Handlers.Event
                 INSERT INTO Accounting.GeneralLedger (Id, CreditAmount, DebitAmount, LineItemId, CreatedOn, CreatedById)
                 VALUES (@Id, @CreditAmount, @DebitAmount, @LineItemId, @CreatedOn, @CreatedById)";
 
-            _DbConnection.Execute(query2, ledgerEntry);
+            _UnitOfWork.Execute(query2, ledgerEntry);
         }
 
         public void Handle(ReportPrinted notification)
@@ -120,10 +119,7 @@ namespace InvoiceCqrs.Handlers.Event
             _InvoiceStream.Write<InvoicePrinted>(builder => builder
                 .WithCorrelationId(notification.RecordId)
                 .WithEvent(_Mapper.Map<ReportPrinted, InvoicePrinted>(notification))
-                .WithMetaData(evt => new
-                {
-                    evt.ReportId
-                }));
+                .WithMetaData(evt => new { evt.ReportId }));
         }
     }
 }

@@ -150,6 +150,8 @@
     <Compile Include="Persistence\EventStore\Util\EventHydrator.cs" />
     <Compile Include="Persistence\EventStore\Util\IEventHydrator.cs" />
     <Compile Include="Persistence\EventStore\Util\ObjectToPropertyDictionaryMapper.cs" />
+    <Compile Include="Persistence\IUnitOfWork.cs" />
+    <Compile Include="Persistence\UnitOfWork.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registries\DatabaseRegistry.cs" />

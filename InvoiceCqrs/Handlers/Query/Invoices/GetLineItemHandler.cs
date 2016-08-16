@@ -4,17 +4,18 @@ using Dapper;
 using InvoiceCqrs.Domain.Entities;
 using InvoiceCqrs.Domain.ValueObjects;
 using InvoiceCqrs.Messages.Queries.Invoices;
+using InvoiceCqrs.Persistence;
 using MediatR;
 
 namespace InvoiceCqrs.Handlers.Query.Invoices
 {
     public class GetLineItemHandler : IRequestHandler<GetLineItem, LineItem>
     {
-        private readonly IDbConnection _DbConnection;
+        private readonly IUnitOfWork _UnitOfWork;
 
-        public GetLineItemHandler(IDbConnection dbConnection)
+        public GetLineItemHandler(IDbConnection dbConnection, IUnitOfWork unitOfWork)
         {
-            _DbConnection = dbConnection;
+            _UnitOfWork = unitOfWork;
         }
 
         public LineItem Handle(GetLineItem message)
@@ -58,7 +59,7 @@ namespace InvoiceCqrs.Handlers.Query.Invoices
                 JOIN Accounting.LineItem li ON u.Id = li.CreatedById
                 WHERE li.Id = @Id;";
 
-            using (var multi = _DbConnection.QueryMultiple(query, message))
+            using (var multi = _UnitOfWork.QueryMultiple(query, message))
             {
                 var invoice = multi.Read<Invoice>().SingleOrDefault();
                 var company = multi.Read<Company>().SingleOrDefault();
