@@ -25,3 +25,5 @@ In addition to the _read-only model_, a query can also query (yo dawg...) the ev
 # Message Bus
 
 The excellent [MediatR](https://github.com/jbogard/MediatR) library is being used to create an in-process message bus for commands, queries, and events. Everything, even the event store, is built around MediatR in order to make sure that messages arrive at the correct destination. For commands and queries, we can always guarantee that they will be processed in the order in which they are sent.  
+
+Events are a different story and no guarantee about the order that they will be processed in should be assumed. The first reason is that event handlers can generate additional events in response to an event, so if we have a piece of code that generates two events in order, we can't assume that they will be processed in that order. The second reason is that we can have multiple event handlers process a single event. The order that the event handlers fire is largely dependent on the order that StructureMap returns the event handlers to MediatR, so even if this order is deterministic in practice any changes to the container can cause this order to change.
