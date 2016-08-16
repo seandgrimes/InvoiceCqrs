@@ -24,4 +24,4 @@ In addition to the _read-only model_, a query can also query (yo dawg...) the ev
 
 # Message Bus
 
-The excellent [MediatR](https://github.com/jbogard/MediatR) library is being used to create an in-process message bus for commands, queries, and events. Everything, even the event store, is built around MediatR in order to make sure that messages arrive at the correct destination.
+The excellent [MediatR](https://github.com/jbogard/MediatR) library is being used to create an in-process message bus for commands, queries, and events. Everything, even the event store, is built around MediatR in order to make sure that messages arrive at the correct destination. For commands and queries, we can always guarantee that they will be processed in the order in which they are sent.  
